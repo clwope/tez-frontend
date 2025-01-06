@@ -21,7 +21,7 @@ import AddProduct from './components/admin/AddProduct.vue';
 import AddAuctionProduct from './components/admin/AddAuctionProduct.vue'
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/tez-frontend/'),
     routes: [
         { path: '/', component: Home },
         { path: '/login', component: Login },
