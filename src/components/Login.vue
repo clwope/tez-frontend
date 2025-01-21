@@ -3,46 +3,52 @@
         <h2>{{formHeader}}</h2>
         <form v-if="formType === 'login'" @submit.prevent="">
             <div>
-                <label for="email">Email: </label>
+                <label for="email">E-posta: </label>
                 <input type="email" id="email" v-model="loginData.email" required />
             </div>
             <div>
-                <label for="password">Password: </label>
-                <input type="password" id="password" v-model="loginData.password" required />
+                <label for="password">Şifre: </label>
+                <input :type="showPassword ? 'text' : 'password'" id="password" v-model="loginData.password" required />
             </div>
+            <label>
+                <input type="checkbox" v-model="showPassword" /> Şifreyi Göster
+            </label>
             <div class="buttons">
-                <button type="submit">Login</button>
-                <button type="button" @click="changeFormToSignIn">Sign In</button>
+                <button type="submit" @click="handleLogin">Giriş Yap</button>
+                <button type="button" @click="changeFormToSignIn">Kayıt Ol</button>
             </div>
         </form>
 
         <form v-else @submit.prevent="">
             <div>
-                <label for="name">Name: </label>
-                <input type="name" id="name" v-model="SignInData.name" required />
+                <label for="name">Kullanıcı İsmi: </label>
+                <input type="text" id="name" v-model="SignInData.username" required />
             </div>
             <div>
-                <label for="surname">Surname: </label>
-                <input type="surname" id="surname" v-model="SignInData.surname" required />
-            </div>
-            <div>
-                <label for="email">Email: </label>
+                <label for="email">E-posta: </label>
                 <input type="email" id="email" v-model="SignInData.email" required />
             </div>
             <div>
-                <label for="password">Password: </label>
-                <input type="password" id="password" v-model="SignInData.password" required />
+                <label for="phoneNumber">Telefon Numarası: </label>
+                <input type="text" id="phoneNumber" v-model="SignInData.phoneNumber" required />
             </div>
+            <div>
+                <label for="password">Şifre: </label>
+                <input :type="showPassword ? 'text' : 'password'" id="password" v-model="SignInData.password" required />
+            </div>
+            <label>
+                <input type="checkbox" v-model="showPassword" /> Şifreyi Göster
+            </label>
             <div class="buttons">
-                <button type="submit">Sign In</button>
-                <button type="button" @click="changeFormToLogin">Login</button>
+                <button type="submit" @click="handleSignIn">Kayıt Ol</button>
+                <button type="button" @click="changeFormToLogin">Giriş Yap</button>
             </div>
         </form>
     </div>
 </template>
 
 <script>
-    // import axios from 'axios';
+    import axios from 'axios';
 
     export default{
         data(){
@@ -52,55 +58,53 @@
                     password: ''
                 },
                 SignInData:{
-                    name: '',
-                    surname: '',
+                    username: '',
                     email: '',
+                    phoneNumber: '',
                     password: ''
                 },
                 formType: 'login',
-                formHeader: 'Login'
+                formHeader: 'Giriş Yap',
+                showPassword: false
             }
         },
         methods: {
-            // async handleLogin(){
-            //     try {
-            //         let response = await axios.post('http://localhost:5216/login', {
-            //             email: this.loginData.email,
-            //             password: this.loginData.password,
-            //         })
+            async handleLogin(){
+                try {
+                    let response = await axios.post('http://18.196.156.3:8080/api/user/user-login', {
+                        email: this.loginData.email,
+                        password: this.loginData.password,
+                    })
 
-            //         // console.log(jwtDecode(response.data.token));
-            //         localStorage.setItem("token", response.data.token);
-            //         window.location.href = "/dashboard";
+                    console.log(response.data);
 
-            //     } catch (error) {
-            //         alert("Incorrect password or email!");
-            //         console.log(error);
-            //     }
-            // },
-            // async handleSignIn(){
-            //     try {
-            //         let response = await axios.post('http://localhost:5216/signup', {
-            //             name: this.SignInData.name,
-            //             surname: this.SignInData.surname,
-            //             email: this.SignInData.email,
-            //             password: this.SignInData.password,
-            //         })
+                } catch (error) {
+                    alert("Incorrect password or email!");
+                    console.log(error);
+                }
+            },
+            async handleSignIn(){
+                try {
+                    let response = await axios.post('http://18.196.156.3:8080/api/user/user-register', {
+                        name: this.SignInData.username,
+                        email: this.SignInData.email,
+                        phoneNumber: this.SignInData.phoneNumber,
+                        password: this.SignInData.password,
+                    })
 
-            //         localStorage.setItem("token", response.data.token);
-            //         window.location.href = "/dashboard";
+                    console.log(response.data);
 
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // },
+                } catch (error) {
+                    console.log(error);
+                }
+            },
             changeFormToSignIn(){
                 this.formType = 'signin';
-                this.formHeader = 'Sign In';
+                this.formHeader = 'Kayıt ol';
             },
             changeFormToLogin(){
                 this.formType = 'login';
-                this.formHeader = 'Login';
+                this.formHeader = 'Giriş Yap';
             }
         }
     }
@@ -140,7 +144,7 @@
     }
 
     .login-form > form > div{
-        width: 60%;
+        width: 72%;
         display: flex;
         justify-content: space-between;
         align-items: center;
