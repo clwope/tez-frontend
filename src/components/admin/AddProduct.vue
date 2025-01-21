@@ -9,39 +9,44 @@
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="product_brand" class="form-label">Marka</label>
-                    <input type="text" class="form-control" id="product_brand">
+                    <input type="text" class="form-control" id="product_brand" v-model="brand">
                 </div>
                 <div class="col-md-6">
                     <label for="product_model" class="form-label">Model</label>
-                    <input type="text" class="form-control" id="product_model">
+                    <input type="text" class="form-control" id="product_model" v-model="model">
                 </div>
                 <div class="col-md-6">
                     <label for="product_case_color" class="form-label">Kasa Rengi</label>
-                    <input type="email" class="form-control" id="product_case_color">
+                    <input type="text" class="form-control" id="product_case_color" v-model="caseColor">
                 </div>
                 <div class="col-md-6">
                     <label for="product_case_shape" class="form-label">Kasa Şekli</label>
-                    <input type="password" class="form-control" id="product_case_shape">
+                    <input type="text" class="form-control" id="product_case_shape" v-model="caseShape">
                 </div>
                 <div class="col-md-6">
                     <label for="product_cord_color" class="form-label">Kordon Rengi</label>
-                    <input type="email" class="form-control" id="product_cord_color">
+                    <input type="text" class="form-control" id="product_cord_color" v-model="cordColor">
                 </div>
                 <div class="col-md-6">
                     <label for="product_dial_color" class="form-label">Kadran Rengi</label>
-                    <input type="password" class="form-control" id="product_dial_color">
+                    <input type="text" class="form-control" id="product_dial_color" v-model="dialColor">
                 </div>
                 <div class="col-md-6">
                     <label for="product_gender" class="form-label">Cinsiyet</label>
-                    <input type="email" class="form-control" id="product_gender">
+                    <select class="form-select" id="product_gender" v-model="gender">
+                        <option value="Unisex" selected>Unisex</option>
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                    </select>
+                    <!-- <input type="email" class="form-control" id="product_gender"> -->
                 </div>
                 <div class="col-md-6">
                     <label for="product_technology" class="form-label">Teknoloji</label>
-                    <input type="password" class="form-control" id="product_technology">
+                    <input type="text" class="form-control" id="product_technology" v-model="technology">
                 </div>
                 <div class="col-md-6">
                     <label for="product_price" class="form-label">Fiyat</label>
-                    <input type="number" class="form-control" id="product_price">
+                    <input type="number" min="0" class="form-control" id="product_price" v-model="price">
                 </div>
                 <div class="col-md-6">
                     <label for="product_images" class="form-label">Ürün Resimleri</label>
@@ -155,5 +160,9 @@
         height: 100px;
         object-fit: cover;
         border: 2px solid white;
+    }
+
+    #product_gender{
+        font-size: 18px;
     }
 </style>

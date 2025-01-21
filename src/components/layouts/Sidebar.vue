@@ -3,6 +3,7 @@
         <router-link to="/admin/home">Ana Sayfa</router-link>
         <a href="">Online Satış Ürünleri</a>
         <a href="">Müzayede Ürünleri</a>
+        <a href="">Siparişlerim</a>
     </div>
 </template>
 
@@ -12,20 +13,20 @@
 
 <style scoped>
     .sidebar{
-        width: 250px;
+        width: 280px;
         min-height: 100vh;
         padding: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        gap: 30px;
         background-color: #DE6449;
     }
 
     .sidebar > a{
         text-decoration: none;
         color: white;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 400;
     }
 

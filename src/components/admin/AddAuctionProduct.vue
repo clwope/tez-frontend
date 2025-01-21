@@ -4,7 +4,7 @@
 
         <div class="form">
 
-            <h1>Online Satış Ürünü Ekle</h1>
+            <h1>Müzayede Ürünü Ekle</h1>
 
             <form class="row g-3">
                 <div class="col-md-6">
@@ -33,7 +33,12 @@
                 </div>
                 <div class="col-md-6">
                     <label for="auction_product_gender" class="form-label">Cinsiyet</label>
-                    <input type="email" class="form-control" id="auction_product_gender">
+                    <select class="form-select" id="auction_product_gender">
+                        <option value="Unisex" selected>Unisex</option>
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                    </select>
+                    <!-- <input type="email" class="form-control" id="auction_product_gender"> -->
                 </div>
                 <div class="col-md-6">
                     <label for="auction_product_technology" class="form-label">Teknoloji</label>
@@ -163,5 +168,9 @@
         height: 100px;
         object-fit: cover;
         border: 2px solid white;
+    }
+
+    #auction_product_gender{
+        font-size: 18px;
     }
 </style>
