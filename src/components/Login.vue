@@ -49,6 +49,7 @@
 
 <script>
     import axios from 'axios';
+    import { jwtDecode } from 'jwt-decode';
 
     export default{
         data(){
@@ -77,9 +78,14 @@
                     })
 
                     console.log(response.data);
+                    let token = response.data.data.token
+
+                    this.$store.commit('saveToken', token);
+
+                    console.log(jwtDecode(token));
 
                 } catch (error) {
-                    alert("Incorrect password or email!");
+                    alert("Yanlış email veya şifre");
                     console.log(error);
                 }
             },
@@ -95,6 +101,7 @@
                     console.log(response.data);
 
                 } catch (error) {
+                    alert("Bir hata oluştu")
                     console.log(error);
                 }
             },

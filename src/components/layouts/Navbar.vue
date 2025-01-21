@@ -2,7 +2,7 @@
     <div class="navbar">
         <div class="first-nav">
             <span>WinBid <i class="bi bi-trophy"></i></span>
-            <router-link to="/">Home</router-link>
+            <router-link to="/">Ana Sayfa</router-link>
             <div class="nav-item">
                 <a href="#">Ürünler</a>
                 <div class="dropdown">
@@ -10,10 +10,11 @@
                     <router-link to="/auction-shop">Müzayede</router-link>
                 </div>
             </div>
-            <a href="">About</a>
-            <a href="">Contact</a>
+            <a href="">Hakkında</a>
+            <a href="">İletişim</a>
         </div>
-        <div class="second-nav">
+
+        <div v-if="this.$store.state.token" class="second-nav">
             <div class="nav-item">
                 <a href="#">Hesap <i class="bi bi-person"></i></a>
                 <div class="dropdown">
@@ -21,9 +22,22 @@
                     <router-link to="/admin/home">Panel <i class="bi bi-speedometer2"></i></router-link>
                 </div>
             </div>
-            <router-link to="/login">Login <i class="bi bi-box-arrow-in-left"></i></router-link>
+            <!-- <router-link to="/login">Giriş <i class="bi bi-box-arrow-in-left"></i></router-link> -->
+            <a href="" @click="logout">Çıkış <i class="bi bi-box-arrow-right"></i></a>
+        </div>
+
+        <div v-else class="second-nav">
+            <div class="nav-item">
+                <a href="#">Hesap <i class="bi bi-person"></i></a>
+                <div class="dropdown">
+                    <router-link to="/cart">Sepet <i class="bi bi-bag"></i></router-link>
+                    <!-- <router-link to="/admin/home">Panel <i class="bi bi-speedometer2"></i></router-link> -->
+                </div>
+            </div>
+            <router-link to="/login">Giriş <i class="bi bi-box-arrow-in-left"></i></router-link>
             <!-- <a href="">Logout <i class="bi bi-box-arrow-right"></i></a> -->
         </div>
+
     </div>
 </template>
 
@@ -32,6 +46,11 @@
         data(){
             return{
                 
+            }
+        },
+        methods: {
+            logout(){
+                this.$store.commit('clearToken')
             }
         }
     }
@@ -49,7 +68,7 @@
     }
 
     .navbar > .first-nav{
-        width: 40%;
+        width: 45%;
         height: 100%;
         display: flex;
         justify-content: space-around;

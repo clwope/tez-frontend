@@ -2,7 +2,8 @@ import { createStore } from "vuex";
 
 let store = createStore({
     state: {
-        cart: JSON.parse(localStorage.getItem('cart')) || []
+        cart: JSON.parse(localStorage.getItem('cart')) || [],
+        token: localStorage.getItem('token') || null
     },
     mutations: {
         addToCart(state, item){
@@ -22,6 +23,14 @@ let store = createStore({
             state.cart.splice(index, 1);
 
             localStorage.setItem('cart', JSON.stringify(state.cart));
+        },
+        saveToken(state, token){
+            state.token = token;
+            localStorage.setItem('token', token);
+        },
+        clearToken(state){
+            state.token = null;
+            localStorage.removeItem('token');
         }
     },
     getters: {
