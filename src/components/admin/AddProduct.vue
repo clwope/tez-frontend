@@ -127,7 +127,7 @@
 
                     this.logProduct();
 
-                    let response = await axios.post('http://18.196.156.3:8080/api/product/create-product', this.product, 
+                    let response = await axios.post('http://18.196.156.3:8080/api/product/create-product', this.product,
                         {
                             headers: {
                                 Authorization: `Bearer ${this.$store.state.token}`
@@ -157,7 +157,7 @@
 
     .add-product > .form{
         width: 100%;
-        padding: 0 300px 60px;
+        padding: 0 250px 60px;
         /* background-color: yellow; */
     }
 

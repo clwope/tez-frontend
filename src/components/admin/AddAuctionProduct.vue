@@ -111,7 +111,7 @@
 
     .add-product > .form{
         width: 100%;
-        padding: 0 300px 60px;
+        padding: 0 250px 60px;
         /* background-color: yellow; */
     }
 
