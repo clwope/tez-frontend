@@ -84,6 +84,8 @@
 
                     console.log(jwtDecode(token));
 
+                    this.$router.push('/admin/home');
+
                 } catch (error) {
                     alert("Yanlış email veya şifre");
                     console.log(error);

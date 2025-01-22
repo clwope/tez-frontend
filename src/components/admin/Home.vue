@@ -4,7 +4,7 @@
         <sidebar></sidebar>
 
         <main>
-            <h2>Hoşgeldiniz username12234!</h2>
+            <h2>Hoşgeldiniz {{username}}!</h2>
             <h3>Toplam Ürünleriniz: 12</h3>
             <h3>Online Satış Ürünleri: <a href="">8</a></h3>
             <h3>Müzayede Ürünleri: <a href="">4</a></h3>
@@ -19,7 +19,36 @@
 </template>
 
 <script>
+    import axios from 'axios';
+    import { jwtDecode } from 'jwt-decode';
 
+    export default {
+        data(){
+            return {
+                username: ''
+            }
+        },
+        methods: {
+            async getUserData(){
+                let userId = jwtDecode(this.$store.state.token).Id;
+                console.log(userId)
+                let response = await axios.get('http://18.196.156.3:8080/api/user/get-user-by-id', {
+                    headers: {
+                        Authorization: `Bearer ${this.$store.state.token}`,
+                        userId: userId
+                    }
+                });
+                console.log(response.data);
+
+                this.username = response.data.data.userName;
+
+                console.log(this.username)
+            }
+        },
+        mounted(){
+            this.getUserData();
+        }
+    }
 </script>
 
 <style scoped>

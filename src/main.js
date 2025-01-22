@@ -19,6 +19,7 @@ import Product from './components/Product.vue';
 import AdminHome from './components/admin/Home.vue';
 import AddProduct from './components/admin/AddProduct.vue';
 import AddAuctionProduct from './components/admin/AddAuctionProduct.vue'
+import Test from './components/Test.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,7 +33,8 @@ const router = createRouter({
         { path: '/auction-product', component: AuctionProduct },
         { path: '/admin/home', component: AdminHome },
         { path: '/admin/add-product', component: AddProduct },
-        { path: '/admin/add-auction-product', component: AddAuctionProduct }
+        { path: '/admin/add-auction-product', component: AddAuctionProduct },
+        { path: '/test', component: Test }
     ]
 })
 

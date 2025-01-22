@@ -9,44 +9,51 @@
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="product_brand" class="form-label">Marka</label>
-                    <input type="text" class="form-control" id="product_brand" v-model="brand">
+                    <input type="text" class="form-control" id="product_brand" v-model="product.brand">
                 </div>
                 <div class="col-md-6">
                     <label for="product_model" class="form-label">Model</label>
-                    <input type="text" class="form-control" id="product_model" v-model="model">
+                    <input type="text" class="form-control" id="product_model" v-model="product.model">
                 </div>
                 <div class="col-md-6">
                     <label for="product_case_color" class="form-label">Kasa Rengi</label>
-                    <input type="text" class="form-control" id="product_case_color" v-model="caseColor">
+                    <input type="text" class="form-control" id="product_case_color" v-model="product.caseColor">
                 </div>
                 <div class="col-md-6">
                     <label for="product_case_shape" class="form-label">Kasa Şekli</label>
-                    <input type="text" class="form-control" id="product_case_shape" v-model="caseShape">
+                    <input type="text" class="form-control" id="product_case_shape" v-model="product.caseShape">
                 </div>
                 <div class="col-md-6">
                     <label for="product_cord_color" class="form-label">Kordon Rengi</label>
-                    <input type="text" class="form-control" id="product_cord_color" v-model="cordColor">
+                    <input type="text" class="form-control" id="product_cord_color" v-model="product.bandColor">
                 </div>
                 <div class="col-md-6">
                     <label for="product_dial_color" class="form-label">Kadran Rengi</label>
-                    <input type="text" class="form-control" id="product_dial_color" v-model="dialColor">
+                    <input type="text" class="form-control" id="product_dial_color" v-model="product.dialColor">
                 </div>
                 <div class="col-md-6">
                     <label for="product_gender" class="form-label">Cinsiyet</label>
-                    <select class="form-select" id="product_gender" v-model="gender">
+                    <select class="form-select" id="product_gender" v-model="product.gender">
                         <option value="Unisex" selected>Unisex</option>
                         <option value="Erkek">Erkek</option>
                         <option value="Kadın">Kadın</option>
                     </select>
-                    <!-- <input type="email" class="form-control" id="product_gender"> -->
                 </div>
                 <div class="col-md-6">
                     <label for="product_technology" class="form-label">Teknoloji</label>
-                    <input type="text" class="form-control" id="product_technology" v-model="technology">
+                    <input type="text" class="form-control" id="product_technology" v-model="product.technology">
+                </div>
+                <div class="col-md-6">
+                    <label for="product_sku" class="form-label">Stok Kodu</label>
+                    <input type="text" class="form-control" id="product_sku" v-model="product.sku">
                 </div>
                 <div class="col-md-6">
                     <label for="product_price" class="form-label">Fiyat</label>
-                    <input type="number" min="0" class="form-control" id="product_price" v-model="price">
+                    <input type="number" min="0" class="form-control" id="product_price" placeholder="1699.90" v-model="product.price">
+                </div>
+                <div class="col-md-6">
+                    <label for="product_stok_count" class="form-label">Stok Adedi</label>
+                    <input type="number" min="1" class="form-control" id="product_stok_count" v-model="product.stockCount">
                 </div>
                 <div class="col-md-6">
                     <label for="product_images" class="form-label">Ürün Resimleri</label>
@@ -57,39 +64,86 @@
                 </div>
             </form>
 
-            <button type="submit">Ürünü Ekle</button>
+            <button type="submit" @click="addProduct">Ürünü Ekle</button>
 
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
+    import { jwtDecode } from 'jwt-decode';
+
     export default {
-  data() {
-    return {
-      previewImages: [], // Array to store image previews
-      uploadedFiles: []  // Array to store the actual files
+        data() {
+            return {
+                previewImages: [],
+                product: {
+                    name: 'Ürün İsmi',
+                    description: 'abc',
+                    price: null,
+                    sku: null,
+                    brand: null,
+                    model: null,
+                    caseColor: null,
+                    caseShape: null,
+                    bandColor: null,
+                    dialColor: null,
+                    gender: null,
+                    technology: null,
+                    isAvailable: true,
+                    stockCount: null,
+                    productImages: null,
+                    userId: null,
+                    categoryId: "3deabc52-a8e6-47df-a211-fac748c6c979"
+                }
+            };
+        },
+        methods: {
+            handleFileUpload(event) {
+                this.previewImages = []; // Clear existing previews
+                this.product.productImages = [];
+
+                const files = event.target.files;
+
+                Array.from(files).forEach(file => {
+                    let path = "file:///C:/Users/tahab/OneDrive/Masaüstü/tez-frontend-images/";
+                    this.product.productImages.push({ path: path + file.name });
+
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        this.previewImages.push(e.target.result); // Add preview image URL
+                    };
+                    reader.readAsDataURL(file); // Convert file to Data URL for preview
+                });
+            },
+            logProduct(){
+                console.log(this.product);
+            },
+            async addProduct(){
+                try {
+                    let token = jwtDecode(this.$store.state.token);
+                    this.product.userId = token.Id;
+
+                    this.logProduct();
+
+                    let response = await axios.post('http://18.196.156.3:8080/api/product/create-product', this.product, 
+                        {
+                            headers: {
+                                Authorization: `Bearer ${this.$store.state.token}`
+                            }
+                        }
+                    );
+
+                    console.log(response.data);
+                    alert("Ürününüz başarıyla eklendi!")
+                } catch (error) {
+                    console.error(error);
+                    alert("Bir hata oluştu");
+                }
+            }
+        }
     };
-  },
-  methods: {
-    handleFileUpload(event) {
-      this.previewImages = []; // Clear existing previews
-      this.uploadedFiles = []; // Clear existing files
-
-      const files = event.target.files;
-
-      Array.from(files).forEach(file => {
-        this.uploadedFiles.push(file); // Store the file
-
-        const reader = new FileReader();
-        reader.onload = e => {
-          this.previewImages.push(e.target.result); // Add preview image URL
-        };
-        reader.readAsDataURL(file); // Convert file to Data URL for preview
-      });
-    }
-  }
-};
 </script>
 
 <style scoped>
