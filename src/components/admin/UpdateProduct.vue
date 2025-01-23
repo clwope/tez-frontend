@@ -4,7 +4,7 @@
 
         <div class="form">
 
-            <h1>Online Satış Ürünü Ekle</h1>
+            <h1>Online Satış Ürünü Güncelle</h1>
 
             <form class="row g-3">
                 <div class="col-md-6">
@@ -64,7 +64,7 @@
                 </div>
             </form>
 
-            <button type="submit" @click="addProduct">Ürünü Ekle</button>
+            <button type="submit" @click="updateProduct">Ürünü Güncelle</button>
 
         </div>
     </div>
@@ -77,6 +77,7 @@
     export default {
         data() {
             return {
+                productId: this.$route.params.id,
                 previewImages: [],
                 product: {
                     name: 'Ürün İsmi',
@@ -107,7 +108,7 @@
                 const files = event.target.files;
 
                 Array.from(files).forEach(file => {
-                    let path = "/tez-frontend/images/";
+                    let path = "/tez-frontend/images/"; // bunu add producta göre dğiştir
                     this.product.productImages.push({ path: path + file.name });
 
                     const reader = new FileReader();
@@ -120,14 +121,11 @@
             logProduct(){
                 console.log(this.product);
             },
-            async addProduct(){
+            async updateProduct(){
                 try {
-                    let token = jwtDecode(this.$store.state.token);
-                    this.product.userId = token.Id;
-
                     this.logProduct();
 
-                    let response = await axios.post('http://18.196.156.3:8080/api/product/create-product', this.product,
+                    let response = await axios.put('http://18.196.156.3:8080/api/product/update-product', {productDto: this.product},
                         {
                             headers: {
                                 Authorization: `Bearer ${this.$store.state.token}`
@@ -136,12 +134,29 @@
                     );
 
                     console.log(response.data);
-                    alert("Ürününüz başarıyla eklendi!")
+                    alert("Ürününüz başarıyla güncellendi!")
                 } catch (error) {
                     console.error(error);
                     alert("Bir hata oluştu");
                 }
+            },
+            async getProduct(){
+                let response = await axios.get('http://18.196.156.3:8080/api/product/get-product-by-id', {
+                    params: {
+                        productId: this.productId
+                    }
+                })
+                console.log(response.data.data)
+
+                this.product = response.data.data
+
+                let tempImages = this.product.productImages
+                this.previewImages = tempImages.map((image) => image.path)
+                console.log(this.previewImages);
             }
+        },
+        mounted(){
+            this.getProduct();
         }
     };
 </script>
