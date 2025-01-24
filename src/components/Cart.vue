@@ -11,8 +11,8 @@
                 <div class="description">
                     <h3>{{product.brand}} (x{{product.quantity}}) <button @click="deleteProduct(product)" class="delete"><i class="bi bi-trash"></i></button></h3>
                     <hr>
-                    <h4>{{product.model}}</h4>
-                    <h5>${{product.price.toFixed(2)}}</h5>
+                    <h4>{{product.model}} {{product.sku}}</h4>
+                    <h5>{{parseFloat(product.price).toFixed(2)}} TL</h5>
                     <div class="quantity">
                         <button class="down-btn" @click="decreaseQuantity(product)"><i class="bi bi-dash"></i></button>
                         <input type="text" :value="product.quantity" readonly disabled>
@@ -34,8 +34,8 @@
         </div>
 
         <div class="bill-info">
-            <h3>Toplam: ${{this.cartTotal}} (KDV dahildir)</h3>
-            <button>Ödeme Yap</button>
+            <h3>Toplam: {{this.cartTotal}} TL (KDV dahildir)</h3>
+            <button @click="createOrder">Ödeme Yap</button>
         </div>
 
     </div>
@@ -43,6 +43,8 @@
 
 <script>
     import saatImage from '@/assets/images/saat_1.jpg';
+    import axios from 'axios';
+    import { jwtDecode } from 'jwt-decode';
 
     export default{
         data(){
@@ -57,30 +59,19 @@
             }
         },
         methods: {
-            addShopProducts(){
-                let newProducts = Array.from({ length: 2 }, (_, index) => ({
-                    img: saatImage,
-                    name: "Product Brand",
-                    model: "Product Model",
-                    price: "$300.00",
-                    quantity: 1
-                }))
+            // addAuctionProducts(){
+            //     let newProducts = Array.from({ length: 1 }, (_, index) => ({
+            //         img: saatImage,
+            //         name: "Product Brand",
+            //         model: "Product Model",
+            //         start_price: "$275.00",
+            //         bid: "$300.00"
+            //     }))
 
-                this.shopProducts.push(...newProducts);
-            },
-            addAuctionProducts(){
-                let newProducts = Array.from({ length: 1 }, (_, index) => ({
-                    img: saatImage,
-                    name: "Product Brand",
-                    model: "Product Model",
-                    start_price: "$275.00",
-                    bid: "$300.00"
-                }))
-
-                this.auctionProducts.push(...newProducts);
-            },
+            //     this.auctionProducts.push(...newProducts);
+            // },
             increaseQuantity(product){
-                let cartProduct = this.$store.state.cart.find((cartItem) => cartItem.id === product.id);
+                let cartProduct = this.$store.state.cart.find((cartItem) => cartItem.productId === product.productId);
 
                 cartProduct.quantity++;
 
@@ -88,7 +79,7 @@
             },
             decreaseQuantity(product){
                 if(product.quantity > 1){
-                    let cartProduct = this.$store.state.cart.find((cartItem) => cartItem.id === product.id);
+                    let cartProduct = this.$store.state.cart.find((cartItem) => cartItem.productId === product.productId);
 
                     cartProduct.quantity--;
 
@@ -96,13 +87,41 @@
                 }
             },
             deleteProduct(product){
-                this.$store.commit('deleteFromCart', product.id);
+                this.$store.commit('deleteFromCart', product.productId);
 
                 this.shopProducts = [...this.$store.state.cart];
+            },
+            async createOrder(){
+                if(this.$store.state.token){
+                    let userId = jwtDecode(this.$store.state.token).Id;
+                    let basket = this.$store.state.cart;
+                    let basketItemDtos = basket.map((item) => {
+                        return {productId: item.productId, quantity: item.quantity}
+                    });
+
+                    let order = { userId: userId, createBasketItemDtos: [...basketItemDtos] };
+
+                    console.log(basket, userId, order);
+
+                    try {
+                        let response = await axios.post('http://18.196.156.3:8080/api/order/create-order', order, {
+                            headers: {
+                                Authorization: `Bearer ${this.$store.state.token}`
+                            }
+                        })
+
+                        console.log(response);
+                        alert("başarılı");
+                    } catch (error) {
+                        console.error(error);
+                        alert("Bir hata oluştu");
+                    }
+                }else{
+                    alert("Lütfen önce giriş yapın");
+                }
             }
         },
         mounted(){
-            // this.addShopProducts();
             // this.addAuctionProducts();
             console.log(this.$store.state.cart);
         }

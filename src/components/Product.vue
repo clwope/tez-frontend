@@ -2,7 +2,7 @@
     <div class="product-page">
 
         <div class="banner">
-            <h4>Ana Sayfa > Online Satış > Product Brand Product Model</h4>
+            <h4>Ana Sayfa > Online Satış > {{product.sku}}</h4>
         </div>
 
         <div class="product-section">
@@ -26,7 +26,7 @@
                     <h5>Cinsiyet: <span>{{product.gender}}</span></h5>
                 </div>
 
-                <h3 class="price">${{parseFloat(product.price).toFixed(2)}}</h3>
+                <h3 class="price">{{parseFloat(product.price).toFixed(2)}} TL</h3>
 
                 <div class="quantity">
                     <button class="down-btn" @click="decreaseQuantity"><i class="bi bi-dash"></i></button>
@@ -66,8 +66,15 @@ export default{
             this.currentImage = image;
         },
         addToCart(){
-            let item = { ...this.product, quantity: this.product_quantity, image: this.product_images[0] };
-            // let item = { id: 2, brand: "Brand2", model: "Model5678", price: 250.75, quantity: 3, image: this.product_images[1] };
+            let item = { 
+                productId: this.product.id, 
+                brand: this.product.brand, 
+                model: this.product.model,
+                price: this.product.price, 
+                sku: this.product.sku, 
+                quantity: this.product_quantity, 
+                image: this.product.productImages[0].path 
+            };
             this.$store.commit('addToCart', item);
         },
         async getProduct(){

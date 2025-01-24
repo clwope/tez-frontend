@@ -7,7 +7,7 @@ let store = createStore({
     },
     mutations: {
         addToCart(state, item){
-            let existingItem = state.cart.find((cartItem) => cartItem.id === item.id);
+            let existingItem = state.cart.find((cartItem) => cartItem.productId === item.productId);
 
             if(existingItem){
                 alert("Ürün zaten sepette!");
@@ -18,7 +18,7 @@ let store = createStore({
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
         deleteFromCart(state, productId){
-            let index = state.cart.findIndex((cartItem) => cartItem.id === productId);
+            let index = state.cart.findIndex((cartItem) => cartItem.productId === productId);
 
             state.cart.splice(index, 1);
 

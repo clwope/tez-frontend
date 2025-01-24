@@ -2,8 +2,8 @@
     <div class="footer">
         <span>Winbid <i class="bi bi-trophy"></i></span>
         <div class="footer-links">
-            <a href="">Home</a>
-            <a href="">Search</a>
+            <router-link to="/">Ana Sayfa</router-link>
+            <router-link to="/cart">Sepet</router-link>
             <a href="">About</a>
             <a href="">Contact</a>
         </div>
@@ -50,12 +50,12 @@
     }
 
     .footer > .footer-links{
-        width: 300px;
+        width: 380px;
         padding: 5px 25px;
         display: flex;
         justify-content: center;
         gap: 20px;
-        margin-left: 100px;
+        margin-left: 180px;
         /* background-color: red; */
     }
 

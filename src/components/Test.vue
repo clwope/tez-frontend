@@ -1,10 +1,11 @@
 <template>
-    <button @click="getProducts">Get Products</button>
+    <button @click="getOrders">Get Orders</button>
     <button @click="deleteProduct('70bd8673-4a0c-46e3-af45-818f67c4f468')">Delete Product</button>
 </template>
 
 <script>
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
     export default{
         data(){
@@ -13,10 +14,15 @@ import axios from 'axios';
             }
         },
         methods: {
-            async getProducts(){
-                let response = await axios.get('http://18.196.156.3:8080/api/product/get-product-list', {
+            async getOrders(){
+                let response = await axios.get('http://18.196.156.3:8080/api/order/get-all-orders', {
+                    params: {
+                        page: 1,
+                        pageSize: 36
+                    },
                     headers: {
-                        Authorization: `Bearer ${this.$store.state.token}`
+                        Authorization: `Bearer ${this.$store.state.token}`,
+                        userId: jwtDecode(this.$store.state.token).Id,
                     }
                 });
                 console.log(response.data);
