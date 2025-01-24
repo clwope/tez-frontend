@@ -20,7 +20,7 @@
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{order.orderId}}</td>
                             <td>{{order.details}}</td>
-                            <td>{{order.price}}</td>
+                            <td>{{parseFloat(order.price).toFixed(2)}} TL</td>
                         </tr>
                     </tbody>
                 </table>
@@ -59,9 +59,12 @@
                             return `${data.brand} ${data.model} (x${data.quantity})`;
                         }).join(', ')
 
+                        let price = item.orderDetailModels.reduce((total, data) => total + (data.price * data.quantity), 0);
+
                         return {
                             orderId: item.orderId,
-                            details
+                            details,
+                            price
                         };
                     })
 
