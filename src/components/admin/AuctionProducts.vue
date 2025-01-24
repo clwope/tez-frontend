@@ -23,6 +23,11 @@
             return {
             
             }
+        },
+        beforeMount(){
+            if(!this.$store.state.token){
+                this.$router.push('/login');
+            }
         }
     };
 </script>

@@ -71,11 +71,11 @@
             this.getUserData();
             this.getProductCount();
         },
-        // beforeMount(){
-        //     if(!this.$store.state.token){
-        //         this.$router.push('/login');
-        //     }
-        // }
+        beforeMount(){
+            if(!this.$store.state.token){
+                this.$router.push('/login');
+            }
+        }
     }
 </script>
 

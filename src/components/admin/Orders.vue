@@ -4,29 +4,23 @@
 
         <div class="table-div">
 
-            <h1>Online Satış Ürünlerin</h1>
+            <h1>Şiparişlerim</h1>
 
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Şipariş ID</th>
-                            <th scope="col">Model</th>
-                            <th scope="col">Cinsiyet</th>
-                            <th scope="col">Teknoloji</th>
-                            <th scope="col">Stok Adedi</th>
-                            <th scope="col">Stok Kodu</th>
+                            <th scope="col">Detay</th>
+                            <th scope="col">Ücret</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(order, index) in orders" :key="index">
                             <th scope="row">{{ index + 1 }}</th>
                             <td>{{order.orderId}}</td>
-                            <td>{{order.model}}</td>
-                            <td>{{order.gender}}</td>
-                            <td>{{order.technology}}</td>
-                            <td>{{order.stockCount}}</td>
-                            <td>{{order.sku}}</td>
+                            <td>{{order.details}}</td>
+                            <td>{{order.price}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -48,10 +42,11 @@
         methods: {
             async getOrders(){
                 try {
-                    let response = await axios.get('http://18.196.156.3:8080/api/order/get-all-orders', {
+                    let response = await axios.get('http://18.196.156.3:8080/api/order/get-all-order-by-active', {
                         params: {
                             page: 1,
-                            pageSize: 36
+                            pageSize: 36,
+                            isDeleted: true
                         },
                         headers: {
                             Authorization: `Bearer ${this.$store.state.token}`,
@@ -68,6 +63,11 @@
         },
         mounted(){
             this.getOrders();
+        },
+        beforeMount(){
+            if(!this.$store.state.token){
+                this.$router.push('/login');
+            }
         }
     };
 </script>

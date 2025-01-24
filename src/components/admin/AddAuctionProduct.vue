@@ -73,31 +73,36 @@
 
 <script>
     export default {
-  data() {
-    return {
-      previewImages: [], // Array to store image previews
-      uploadedFiles: []  // Array to store the actual files
+        data() {
+            return {
+            previewImages: [], // Array to store image previews
+            uploadedFiles: []  // Array to store the actual files
+            };
+        },
+        methods: {
+            handleFileUpload(event) {
+            this.previewImages = []; // Clear existing previews
+            this.uploadedFiles = []; // Clear existing files
+
+            const files = event.target.files;
+
+            Array.from(files).forEach(file => {
+                this.uploadedFiles.push(file); // Store the file
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                this.previewImages.push(e.target.result); // Add preview image URL
+                };
+                reader.readAsDataURL(file); // Convert file to Data URL for preview
+            });
+            }
+        },
+        beforeMount(){
+            if(!this.$store.state.token){
+                this.$router.push('/login');
+            }
+        }
     };
-  },
-  methods: {
-    handleFileUpload(event) {
-      this.previewImages = []; // Clear existing previews
-      this.uploadedFiles = []; // Clear existing files
-
-      const files = event.target.files;
-
-      Array.from(files).forEach(file => {
-        this.uploadedFiles.push(file); // Store the file
-
-        const reader = new FileReader();
-        reader.onload = e => {
-          this.previewImages.push(e.target.result); // Add preview image URL
-        };
-        reader.readAsDataURL(file); // Convert file to Data URL for preview
-      });
-    }
-  }
-};
 </script>
 
 <style scoped>

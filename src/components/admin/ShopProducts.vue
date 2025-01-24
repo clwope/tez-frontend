@@ -4,7 +4,7 @@
 
         <div class="table-div">
 
-            <h1>Online Satış Ürünlerin</h1>
+            <h1>Online Satış Ürünlerim</h1>
 
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -94,6 +94,11 @@
         },
         mounted(){
             this.getProducts();
+        },
+        beforeMount(){
+            if(!this.$store.state.token){
+                this.$router.push('/login');
+            }
         }
     };
 </script>
