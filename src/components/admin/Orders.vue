@@ -46,15 +46,30 @@
                         params: {
                             page: 1,
                             pageSize: 36,
-                            isDeleted: true
+                            isDeleted: false
                         },
                         headers: {
                             Authorization: `Bearer ${this.$store.state.token}`,
                             userId: jwtDecode(this.$store.state.token).Id,
                         }
                     });
-                    console.log(response.data);
-                    this.orders = response.data.data;
+
+                    let confOrders = response.data.data.map((item) => {
+                        let details = item.orderDetailModels.map((data) => {
+                            return `${data.brand} ${data.model} (x${data.quantity})`;
+                        }).join(', ')
+
+                        return {
+                            orderId: item.orderId,
+                            details
+                        };
+                    })
+
+                    console.log(response.data.data);
+
+                    this.orders = confOrders;
+
+                    console.log(this.orders);
                 } catch (error) {
                     console.error(error);
                     alert("Bir hata oluştu");
