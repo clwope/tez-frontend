@@ -10,23 +10,23 @@
                 <img :src="currentImage">
 
                 <div class="images">
-                    <img v-for="(image, index) in product_images" :key="index" @click="changeImg(image)" :src="image">
+                    <img v-for="(image, index) in product.productImages" :key="index" @click="changeImg(image.path)" :src="image.path">
                 </div>
             </div>
 
             <div class="description">
                 <div class="product-details">
                     <h3>{{product.brand}}</h3>
-                    <h4>{{product.model}}</h4>
-                    <h5>Saat Tipi: <span>Klasik</span></h5>
-                    <h5>Kasa Rengi: <span>Yeşil</span></h5>
-                    <h5>Kasa Tipi: <span>Yuvarlak</span></h5>
-                    <h5>Kordon Rengi: <span>Gümüş</span></h5>
-                    <h5>Kadran Rengi: <span>Gümüş</span></h5>
-                    <h5>Cinsiyet: <span>Erkek</span></h5>
+                    <h4>{{product.model}} {{product.sku}}</h4>
+                    <h5>Technology: <span>{{product.technology}}</span></h5>
+                    <h5>Kasa Rengi: <span>{{product.caseColor}}</span></h5>
+                    <h5>Kasa Tipi: <span>{{product.caseShape}}</span></h5>
+                    <h5>Kordon Rengi: <span>{{product.bandColor}}</span></h5>
+                    <h5>Kadran Rengi: <span>{{product.dialColor}}</span></h5>
+                    <h5>Cinsiyet: <span>{{product.gender}}</span></h5>
                 </div>
 
-                <h3 class="price">${{product.price.toFixed(2)}}</h3>
+                <h3 class="price">${{parseFloat(product.price).toFixed(2)}}</h3>
 
                 <div class="quantity">
                     <button class="down-btn" @click="decreaseQuantity"><i class="bi bi-dash"></i></button>
@@ -42,18 +42,15 @@
 </template>
 
 <script>
-import saatImage from '@/assets/images/saat_4.jpeg';
-import saatImage2 from '@/assets/images/saat_5.jpeg';
-import saatImage3 from '@/assets/images/saat_6.jpeg';
-import saatImage4 from '@/assets/images/saat_1.jpg';
+import axios from 'axios';
 
 export default{
     data(){
         return{
-            product: { id: 1, brand: "Brand1", model: "Model1234", price: 300.00 },
+            product: { },
             product_quantity: 1,
-            product_images: [ saatImage4, saatImage, saatImage2, saatImage3 ],
-            currentImage: undefined
+            currentImage: '',
+            productId: this.$route.params.id
         }
     },
     methods: {
@@ -72,10 +69,22 @@ export default{
             let item = { ...this.product, quantity: this.product_quantity, image: this.product_images[0] };
             // let item = { id: 2, brand: "Brand2", model: "Model5678", price: 250.75, quantity: 3, image: this.product_images[1] };
             this.$store.commit('addToCart', item);
+        },
+        async getProduct(){
+            let response = await axios.get('http://18.196.156.3:8080/api/product/get-product-by-id', {
+                params: {
+                    productId: this.productId 
+                }
+            })
+
+            this.product = response.data.data;
+            console.log(this.product);
+
+            this.currentImage = this.product.productImages[0].path
         }
     },
     mounted() {
-        this.currentImage = this.product_images[0];
+        this.getProduct();
     }
 }
 

@@ -121,59 +121,83 @@
 
         <div class="products">
             <div class="product-card" v-for="(product, index) in products" :key="index">
-                <img :src="product.img">
+                <img :src="product.productImages[0].path">
                 <div class="description">
-                    <h3>{{product.name}}</h3>
+                    <h3>{{product.brand}}</h3>
                     <hr>
                     <h4>{{product.model}}</h4>
-                    <h5>{{product.price}}</h5>
-                    <button>Sepete Ekle</button>
+                    <h5>{{parseFloat(product.price).toFixed(2)}} TL</h5>
+                    <button @click="goToProduct(product.id)">Ürünü İncele</button>
                 </div>
             </div>
         </div>
 
         <div class="pagination">
-            <button class="prev"><i class="bi bi-chevron-left"></i></button>
-            <button class="page-btn">1</button>
-            <button class="page-btn active">2</button>
-            <button class="page-btn">3</button>
-            <button class="next"><i class="bi bi-chevron-right"></i></button>
+            <button class="prev" :disabled="currentPage === 1" @click="changePage(currentPage - 1)"><i class="bi bi-chevron-left"></i></button>
+            <button v-for="page in totalPages" :key="page" :class="['page-btn', {active: page === currentPage}]" @click="changePage(page)">{{page}}</button>
+            <!-- <button class="page-btn active">2</button>
+            <button class="page-btn">3</button> -->
+            <button class="next" :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)"><i class="bi bi-chevron-right"></i></button>
         </div>
 
     </div>
 </template>
 
 <script>
-    import saatImage from '@/assets/images/saat_1.jpg';
+    import axios from 'axios';
     
     export default {
         data(){
             return {
                 products: [],
+                currentPage: 1,
+                pageSize: 9,
+                totalPages: 1,
                 isFilterVisible: false,
                 isSortVisible: false
             }
         },
         methods: {
-            addProducts(){
-                let newProducts = Array.from({ length: 12 }, (_, index) => ({
-                    img: saatImage,
-                    name: "Product Brand",
-                    model: "Product Model",
-                    price: "$300.00",
-                }));
-
-                this.products.push(...newProducts);
-            },
             toggleFilter(){
                 this.isFilterVisible = !this.isFilterVisible;
             },
             toggleSort(){
                 this.isSortVisible = !this.isSortVisible;
-            }
+            },
+            goToProduct(id){
+                this.$router.push(`/product/${id}`)
+            },
+            async getProducts(){
+                let firstResponse = await axios.get('http://18.196.156.3:8080/api/product/get-product-list', {
+                    params: {
+                        page: 1,
+                        pageSize: 36
+                    }
+                })
+
+                this.totalPages = Math.ceil(firstResponse.data.data.length / this.pageSize)
+
+                let secondResponse = await axios.get('http://18.196.156.3:8080/api/product/get-product-list', {
+                    params: {
+                        page: this.currentPage,
+                        pageSize: this.pageSize
+                    }
+                })
+
+                this.products = secondResponse.data.data;
+
+                console.log(this.products);
+                console.log(this.totalPages)
+            },
+            changePage(newPage) {
+                if (newPage >= 1 && newPage <= this.totalPages) {
+                    this.currentPage = newPage;
+                    this.getProducts();
+                }
+            },
         },
         mounted() {
-            this.addProducts();
+            this.getProducts();
         }
     }
 </script>

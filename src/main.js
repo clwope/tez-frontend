@@ -32,7 +32,7 @@ const router = createRouter({
         { path: '/shop', component: Shop },
         { path: '/auction-shop', component: AuctionShop },
         { path: '/cart', component: Cart },
-        { path: '/product', component: Product },
+        { path: '/product/:id', component: Product },
         { path: '/auction-product', component: AuctionProduct },
         { path: '/admin/home', component: AdminHome },
         { path: '/admin/add-product', component: AddProduct },
