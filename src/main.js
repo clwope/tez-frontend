@@ -24,6 +24,7 @@ import ShopProducts from './components/admin/ShopProducts.vue'
 import AuctionProducts from './components/admin/AuctionProducts.vue'
 import UpdateProduct from './components/admin/UpdateProduct.vue'
 import Orders from './components/admin/Orders.vue'
+import Payment from './components/Payment.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +43,7 @@ const router = createRouter({
         { path: '/admin/auction-products', component: AuctionProducts},
         { path: '/admin/update-product/:id', component: UpdateProduct },
         { path: '/admin/orders', component: Orders},
+        { path: '/payment', component: Payment },
         { path: '/test', component: Test }
     ]
 })

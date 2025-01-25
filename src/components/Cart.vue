@@ -20,17 +20,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="product-card" v-for="(product, index) in auctionProducts" :key="index">
-                <img :src="product.img">
-                <div class="description">
-                    <h3>{{product.name}}</h3>
-                    <hr>
-                    <h4>{{product.model}}</h4>
-                    <h5 class="auction-price-info">Başlangıç Fiyatı: {{product.start_price}}</h5>
-                    <h5 class="auction-price-info">Son Teklif: {{product.bid}}</h5>
-                </div>
-            </div>
         </div>
 
         <div class="bill-info">
@@ -42,15 +31,13 @@
 </template>
 
 <script>
-    import saatImage from '@/assets/images/saat_1.jpg';
     import axios from 'axios';
-    import { jwtDecode } from 'jwt-decode';
+    import { InvalidTokenError, jwtDecode } from 'jwt-decode';
 
     export default{
         data(){
             return {
-                shopProducts: [...this.$store.state.cart],
-                auctionProducts: []
+                shopProducts: [...this.$store.state.cart]
             }
         },
         computed: {
@@ -59,17 +46,6 @@
             }
         },
         methods: {
-            // addAuctionProducts(){
-            //     let newProducts = Array.from({ length: 1 }, (_, index) => ({
-            //         img: saatImage,
-            //         name: "Product Brand",
-            //         model: "Product Model",
-            //         start_price: "$275.00",
-            //         bid: "$300.00"
-            //     }))
-
-            //     this.auctionProducts.push(...newProducts);
-            // },
             increaseQuantity(product){
                 let cartProduct = this.$store.state.cart.find((cartItem) => cartItem.productId === product.productId);
 
@@ -91,7 +67,23 @@
 
                 this.shopProducts = [...this.$store.state.cart];
             },
+            isTokenValid(token) {
+                try {
+                    const decoded = jwtDecode(token);
+                    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+                    return decoded.exp && decoded.exp > currentTime;
+                } catch (error) {
+                    // If jwtDecode throws an error, the token is invalid
+                    console.error("Invalid or expired token:", error);
+                    return false;
+                }
+            },
             async createOrder(){
+                if (!this.isTokenValid(this.$store.state.token)) {
+                    alert("Oturum süresi doldu. Lütfen yeniden giriş yapın.");
+                    return;
+                }
+
                 if(this.$store.state.token){
                     let userId = jwtDecode(this.$store.state.token).Id;
                     let basket = this.$store.state.cart;
@@ -109,9 +101,41 @@
                                 Authorization: `Bearer ${this.$store.state.token}`
                             }
                         })
+                        console.log(response.data);
 
-                        console.log(response);
+                        let orderId = response.data.data.orderId;
+
+                        let userResponse = await axios.get('http://18.196.156.3:8080/api/user/get-user-by-id', {
+                            headers: {
+                                userId: jwtDecode(this.$store.state.token).Id
+                            }
+                        })
+                        console.log(userResponse.data);
+
+                        let user = userResponse.data.data;
+
+                        let paymentBody = {
+                            buyerId: user.id,
+                            buyerName: user.userName,
+                            buyerSurname: 'WinBid',
+                            buyerEmail: user.email,
+                            buyerGsmNumber: user.phoneNumber,
+                            orderId: orderId,
+                            price: this.cartTotal,
+                            basketId: 'random123'
+                        }
+
+                        let paymentResponse = await axios.post('http://18.196.156.3:8080/api/payment/initialize-payment', paymentBody)
+
+                        console.log(paymentResponse.data);
+
+                        let iyzicoScript = paymentResponse.data.iyzicoCheckoutFormContent;
+                        let iyzicoToken = paymentResponse.data.iyzicoToken;
+
+                        this.$router.push({path: '/payment', query: {content: iyzicoScript, token: iyzicoToken}});
+
                         alert("başarılı");
+
                     } catch (error) {
                         console.error(error);
                         alert("Bir hata oluştu");
@@ -122,7 +146,6 @@
             }
         },
         mounted(){
-            // this.addAuctionProducts();
             console.log(this.$store.state.cart);
         }
     }
@@ -280,28 +303,6 @@
     border: 1px solid black;
     background-color: white;
     color: black;
-}
-
-.cart > .products > .product-card > .description > h5.auction-price-info{
-    padding: 2px 0 2px 20px;
-    margin: 0;
-    font-size: 20px;
-    font-weight: 400;
-    font-style: oblique;
-    color: black;
-    /* background-color: yellow; */
-}
-
-.cart > .products > .product-card > .description > h5.auction-price-info:nth-of-type(1){
-    margin-top: 12px;
-    color: red;
-    /* background-color: yellow; */
-}
-
-.cart > .products > .product-card > .description > h5.auction-price-info:nth-of-type(2){
-    margin-top: 5px;
-    color: green;
-    /* background-color: yellow; */
 }
 
 /* Bill Info */
