@@ -5,9 +5,9 @@
 
         <main>
             <h2>Hoşgeldiniz {{username}}!</h2>
-            <h3>Toplam Ürünleriniz: 12</h3>
+            <h3>Toplam Ürünleriniz: {{productCount + auctionProductCount}}</h3>
             <h3>Online Satış Ürünleri: <router-link to="/admin/products">{{productCount}}</router-link></h3>
-            <h3>Müzayede Ürünleri: <a href="">4</a></h3>
+            <h3>Müzayede Ürünleri: <router-link to="/admin/auction-products">{{auctionProductCount}}</router-link></h3>
 
             <div class="buttons">
                 <router-link to="/admin/add-product">Online Satış Ürünü Ekle</router-link>
@@ -26,7 +26,8 @@
         data(){
             return {
                 username: '',
-                productCount: 0
+                productCount: 0,
+                auctionProductCount: 0
             }
         },
         methods: {
@@ -66,10 +67,28 @@
                     console.error(error);
                 }
             },
+            async getAuctionProductCount(){
+                try {
+                    let userId = jwtDecode(this.$store.state.token).Id;
+                    let response = await axios.get('http://18.196.156.3:8080/api/auction/get-auctions-by-userid', {
+                        headers: {
+                            userId: userId,
+                            Authorization: `Bearer ${this.$store.state.token}`
+                        }
+                    })
+                    console.log(response.data.data);
+
+                    this.auctionProductCount = response.data.data.length;
+
+                } catch (error) {
+                    console.error(error);
+                }
+            },
         },
         mounted(){
             this.getUserData();
             this.getProductCount();
+            this.getAuctionProductCount();
         },
         beforeMount(){
             if(!this.$store.state.token){

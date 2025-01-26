@@ -15,14 +15,9 @@ import { jwtDecode } from 'jwt-decode';
         },
         methods: {
             async getOrders(){
-                let response = await axios.get('http://18.196.156.3:8080/api/order/get-all-orders', {
+                let response = await axios.get('http://18.196.156.3:8080/api/product/get-product-by-id', {
                     params: {
-                        page: 1,
-                        pageSize: 36
-                    },
-                    headers: {
-                        Authorization: `Bearer ${this.$store.state.token}`,
-                        userId: jwtDecode(this.$store.state.token).Id,
+                        productId: "6f909f3e-c20b-4c2d-baa0-560d471bc5d6"
                     }
                 });
                 console.log(response.data);

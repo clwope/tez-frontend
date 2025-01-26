@@ -1,12 +1,12 @@
 <template>
     <div class="auction-product">
 
-        <div class="product-card">
+        <div class="product-card" v-if="product && product.productDto">
             <div class="product-details">
                 <Carousel v-bind="carouselConfig">
-                    <Slide v-for="(image, index) in product_images" :key="index">
+                    <Slide v-for="(image, index) in product.productDto.productImages" :key="index">
                         <div class="carousel__item">
-                            <img :src="image">
+                            <img :src="image.path">
                         </div>
                     </Slide>
 
@@ -16,17 +16,15 @@
                     </template>
                 </Carousel>
 
-                <!-- <img src="../assets/images/saat_4.jpeg"> -->
-
                 <div class="description">
-                    <h3>Product Brand</h3>
-                    <h4>Product Model</h4>
-                    <h5>Saat Tipi: <span>Klasik</span></h5>
-                    <h5>Kadran Rengi: <span>Yeşil</span></h5>
-                    <h5>Kasa Tipi: <span>Yuvarlak</span></h5>
-                    <h5>Kasa Rengi: <span>Gümüş</span></h5>
-                    <h5>Kordon Rengi: <span>Gümüş</span></h5>
-                    <h5>Cinsiyet: <span>Erkek</span></h5>
+                    <h3>{{product.productDto.brand}}</h3>
+                    <h4>{{product.productDto.model}}</h4>
+                    <h5>Teknoloji: <span>{{product.productDto.technology}}</span></h5>
+                    <h5>Kadran Rengi: <span>{{product.productDto.dialColor}}</span></h5>
+                    <h5>Kasa Tipi: <span>{{product.productDto.caseShape}}</span></h5>
+                    <h5>Kasa Rengi: <span>{{product.productDto.caseColor}}</span></h5>
+                    <h5>Kordon Rengi: <span>{{product.productDto.bandColor}}</span></h5>
+                    <h5>Cinsiyet: <span>{{product.productDto.gender}}</span></h5>
                 </div>
             </div>
 
@@ -35,33 +33,32 @@
                 <div class="hr"></div>
 
                 <div class="description">
-                    <h3>14 Aralık 2024</h3>
-                    <h3>16:00 - 16:05</h3>
+                    <h3>{{formatDate(product.auctionStartDate)}}</h3>
+                    <h3>{{formatDate(product.auctionEndDate)}}</h3>
                 </div>
 
                 <div class="countdown">
-                    <h3>05:00</h3>
+                    <h3 class="continue"><i class="bi bi-broadcast"></i> Müzayede Devam Ediyor</h3>
                 </div>
 
                 <div class="bids">
-                    <h3>Başlangıç Fiyatı: $275.00</h3>
-                    <h3>Son Teklif: $300.00</h3>
+                    <h3>Başlangıç Fiyatı: {{(product.startingPrice).toFixed(2)}} TL</h3>
+                    <h3>Son Teklif: {{(product.highestBid).toFixed(2)}} TL</h3>
                 </div>
 
-                <input placeholder="Teklifinizi girin..." type="text">
-                <button>Teklif Ver</button>
+                <input placeholder="Teklifinizi girin..." type="number" v-model="bid">
+                <button @click="logBid">Teklif Ver</button>
             </div>
         </div>
-
+        <div v-else>Loading...</div>
     </div>
 </template>
 
 <script>
 import 'vue3-carousel/carousel.css'
 import { Carousel, Slide, Navigation, Pagination } from 'vue3-carousel';
-import saatImage from '@/assets/images/saat_4.jpeg';
-import saatImage2 from '@/assets/images/saat_5.jpeg';
-import saatImage3 from '@/assets/images/saat_6.jpeg';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default{
     components: {
@@ -75,7 +72,61 @@ export default{
             carouselConfig: {
                 wrapAround: true
             },
-            product_images: [ saatImage, saatImage2, saatImage3 ]
+            product: { },
+            productId: this.$route.params.id,
+            bid: null
+        }
+    },
+    methods: {
+        logBid(){
+            if(this.bid === null || this.bid === ""){
+                alert("Bir teklif girmeniz gerek!")
+                return
+            }
+
+            if(this.bid.toString().includes(",") || this.bid.toString().includes(".")){
+                alert("Teklifte virgül veya nokta gibi işaretler bulunmamalı!")
+                return
+            }
+            
+            alert("Teklif başarılı")
+        },
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+            const day = String(date.getUTCDate()).padStart(2, "0");
+            const hours = String(date.getUTCHours()).padStart(2, "0");
+            const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        },
+        async getAuctionProduct(){
+            try {
+                let userId = jwtDecode(this.$store.state.token).Id;
+                let response = await axios.get('http://18.196.156.3:8080/api/auction/get-auctions-by-userid', {
+                    headers: {
+                        userId: userId,
+                        Authorization: `Bearer ${this.$store.state.token}`
+                    }
+                })
+                console.log(response.data.data);
+
+                this.product = response.data.data.find((item) => item.productDto.id === this.productId);
+
+                console.log(this.product);
+
+            } catch (error) {
+                console.error(error);
+            }
+        },
+    },
+    mounted() {
+        this.getAuctionProduct();
+    },
+    beforeMount(){
+        if(!this.$store.state.token){
+            this.$router.push('/login');
         }
     }
 }
@@ -146,8 +197,6 @@ export default{
     --vc-pgn-width: 20px;
     --vc-pgn-active-color: black;
 }
-
-
 
 .auction-product > .product-card > .product-details > .description{
     width: 100%;
@@ -243,13 +292,22 @@ export default{
     /* background-color: #DE6449; */
 }
 
-.auction-product > .product-card > .auction-details > .countdown > h3{
+.auction-product > .product-card > .auction-details > .countdown > h3.continue{
     padding: 0;
     margin: 0;
-    font-size: 30px;
+    font-size: 22px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-weight: 500;
-    color: black;
+    font-weight: 400;
+    color: green;
+}
+
+.auction-product > .product-card > .auction-details > .countdown > h3.end{
+    padding: 0;
+    margin: 0;
+    font-size: 22px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 400;
+    color: gray;
 }
 
 .auction-product > .product-card > .auction-details > .bids{
