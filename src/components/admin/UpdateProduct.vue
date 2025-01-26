@@ -56,8 +56,8 @@
                     <input type="number" min="1" class="form-control" id="product_stok_count" v-model="product.stockCount">
                 </div>
                 <div class="col-md-6">
-                    <label for="product_images" class="form-label">Ürün Resimleri</label>
-                    <input type="file" class="form-control" id="product_images" @change="handleFileUpload" multiple>
+                    <!-- <label for="product_images" class="form-label">Ürün Resimleri</label>
+                    <input type="file" class="form-control" id="product_images" @change="handleFileUpload" multiple> -->
                     <div class="image-preview">
                         <img v-for="(image, index) in previewImages" :key="index" :src="image" class="preview-image" />
                     </div>
@@ -101,23 +101,23 @@
             };
         },
         methods: {
-            handleFileUpload(event) {
-                this.previewImages = []; // Clear existing previews
-                this.product.productImages = [];
+            // handleFileUpload(event) {
+            //     this.previewImages = []; // Clear existing previews
+            //     this.product.productImages = [];
 
-                const files = event.target.files;
+            //     const files = event.target.files;
 
-                Array.from(files).forEach(file => {
-                    let path = "/tez-frontend/images/"; // bunu add producta göre dğiştir
-                    this.product.productImages.push({ path: path + file.name });
+            //     Array.from(files).forEach(file => {
+            //         let path = "/tez-frontend/images/"; // bunu add producta göre dğiştir
+            //         this.product.productImages.push({ path: path + file.name });
 
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        this.previewImages.push(e.target.result); // Add preview image URL
-                    };
-                    reader.readAsDataURL(file); // Convert file to Data URL for preview
-                });
-            },
+            //         const reader = new FileReader();
+            //         reader.onload = e => {
+            //             this.previewImages.push(e.target.result); // Add preview image URL
+            //         };
+            //         reader.readAsDataURL(file); // Convert file to Data URL for preview
+            //     });
+            // },
             logProduct(){
                 console.log(this.product);
             },
