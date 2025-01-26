@@ -6,7 +6,7 @@
             <p>Müzayedelere katılın ve istediğiniz ürünü kazanmak için en iyi teklifinizi yapın!</p>
         </div>
 
-        <div class="options">
+        <!-- <div class="options">
             <div class="filter">
                 <button class="filter-btn" @click="toggleFilter">Filtrele <i class="bi bi-funnel"></i></button>
 
@@ -117,7 +117,7 @@
                 </div>
                 <div class="sort-backdrop" v-if="isSortVisible" @click="toggleSort"></div>
             </div>
-        </div>
+        </div> -->
 
         <div class="products">
             <div class="product-card" v-for="(product, index) in products" :key="index">
@@ -132,50 +132,68 @@
             </div>
         </div>
 
-        <div class="pagination">
-            <button class="prev"><i class="bi bi-chevron-left"></i></button>
-            <button class="page-btn">1</button>
-            <button class="page-btn active">2</button>
-            <button class="page-btn">3</button>
-            <button class="next"><i class="bi bi-chevron-right"></i></button>
-        </div>
-
     </div>
 </template>
 
 <script>
-    import saatImage from '@/assets/images/saat_1.jpg';
-    
-    export default {
-        data(){
-            return {
-                products: [],
-                isFilterVisible: false,
-                isSortVisible: false
-            }
-        },
-        methods: {
-            addProducts(){
-                let newProducts = Array.from({ length: 12 }, (_, index) => ({
-                    img: saatImage,
-                    name: "Product Brand",
-                    model: "Product Model",
-                    price: "$300.00",
-                }));
+// import axios from "axios";
 
-                this.products.push(...newProducts);
-            },
-            toggleFilter(){
-                this.isFilterVisible = !this.isFilterVisible;
-            },
-            toggleSort(){
-                this.isSortVisible= !this.isSortVisible;
-            }
-        },
-        mounted() {
-            this.addProducts();
-        }
+export default {
+  data() {
+    return {
+      products: [], // Ürün listesi
+      connection: null, // SignalR bağlantısı
+    };
+  },
+  methods: {
+    // SignalR bağlantısını başlat
+    startSignalRConnection() {
+      this.connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://18.196.156.3:8080/auctionHub")
+        .withAutomaticReconnect()
+        .build();
+
+      // SignalR bağlantısını başlat
+      this.connection
+        .start()
+        .then(() => {
+          console.log("SignalR bağlantısı kuruldu.");
+
+          // Aktif müzayedeleri dinle
+          this.connection.on("ReceiveAllActiveAuctions", (data) => {
+            console.log("Aktif müzayedeler güncellendi:", data);
+            // this.products = data.map((auction) => ({
+            //   img: "/path/to/default/image.jpg", // Örnek resim
+            //   name: auction.productName,
+            //   model: auction.productModel,
+            //   highestBid: auction.highestBid || auction.startingPrice,
+            //   price: `${auction.startingPrice} TL`,
+            // }));
+          });
+
+          // Son teklif güncellemelerini dinle
+        //   this.connection.on("ReceiveAllActiveAuctionBind", (data) => {
+        //     console.log("Son teklif güncellendi:", data);
+        //     const auction = this.products.find(
+        //       (product) => product.id === data.auctionId
+        //     );
+        //     if (auction) {
+        //       auction.highestBid = data.bidAmount;
+        //     }
+        //   });
+        })
+        .catch((err) => console.error("SignalR bağlantı hatası:", err));
+    },
+  },
+  mounted() {
+    this.startSignalRConnection(); // SignalR bağlantısını başlat
+  },
+  beforeDestroy() {
+    if (this.connection) {
+      this.connection.stop(); // Bileşen yok edilmeden önce bağlantıyı durdur
     }
+  },
+};
 </script>
 
 <style scoped>
@@ -338,39 +356,6 @@
         background-color: white;
         color: #DE6449;
         border: 1px solid #DE6449;
-    }
-
-    /* Pagination */
-
-    .shop > .pagination{
-        width: 100%;
-        height: 120px;
-        padding-bottom: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        /* background-color: blue; */
-    }
-
-    .shop > .pagination > button{
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
-        border: none;
-        background-color: #DE6449;
-        color: white;
-        transition: 0.2s;
-    }
-
-    .shop > .pagination > button.active{
-        border: 3px solid black;
-    }
-
-    .shop > .pagination > button:hover{
-        border: 1px solid #DE6449;
-        background-color: white;
-        color: #DE6449;
     }
 
     /* Filter Modal */

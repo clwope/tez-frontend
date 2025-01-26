@@ -3,7 +3,9 @@ import { createStore } from "vuex";
 let store = createStore({
     state: {
         cart: JSON.parse(localStorage.getItem('cart')) || [],
-        token: localStorage.getItem('token') || null
+        token: localStorage.getItem('token') || null,
+        orderId: localStorage.getItem('orderId') || null,
+        IyzicoToken: localStorage.getItem('IyzicoToken') || null
     },
     mutations: {
         addToCart(state, item){
@@ -27,6 +29,14 @@ let store = createStore({
         saveToken(state, token){
             state.token = token;
             localStorage.setItem('token', token);
+        },
+        saveIyzicoToken(state, token){
+            state.IyzicoToken = token;
+            localStorage.setItem('IyzicoToken', token);
+        },
+        saveOrderId(state, id){
+            state.orderId = id;
+            localStorage.setItem('orderId', id);
         },
         clearToken(state){
             state.token = null;

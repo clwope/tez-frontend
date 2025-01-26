@@ -47,7 +47,7 @@
                 </div>
 
                 <input placeholder="Teklifinizi girin..." type="number" v-model="bid">
-                <button @click="logBid">Teklif Ver</button>
+                <button @click="bidToProduct">Teklif Ver</button>
             </div>
         </div>
         <div v-else>Loading...</div>
@@ -74,11 +74,12 @@ export default{
             },
             product: { },
             productId: this.$route.params.id,
-            bid: null
+            bid: null,
+            connection: null, // SignalR bağlantısı
         }
     },
     methods: {
-        logBid(){
+        async bidToProduct(){
             if(this.bid === null || this.bid === ""){
                 alert("Bir teklif girmeniz gerek!")
                 return
@@ -89,7 +90,24 @@ export default{
                 return
             }
             
-            alert("Teklif başarılı")
+            let userId = jwtDecode(this.$store.state.token).Id;
+            let auctionId = this.product.auctionId;
+
+            let reqBody = {
+                userId: userId,
+                auctionId: auctionId,
+                bidAmount: this.bid 
+            }
+
+            let response = await axios.post('http://18.196.156.3:8080/api/auction/bid-on-auction', reqBody, {
+                headers: {
+                    Authorization: `Bearer ${this.$store.state.token}`
+                }
+            });
+
+            console.log(response);
+
+
         },
         formatDate(dateString) {
             const date = new Date(dateString);
@@ -120,13 +138,37 @@ export default{
                 console.error(error);
             }
         },
+        startSignalRConnection() {
+            this.connection = new signalR.HubConnectionBuilder()
+                .withUrl("http://18.196.156.3:8080/auctionHub")
+                .withAutomaticReconnect()
+                .build();
+
+            this.connection
+                .start()
+                .then(() => {
+                console.log("SignalR bağlantısı kuruldu.");
+
+                // Son teklif güncellemelerini dinle
+                this.connection.on("ReceiveLastBidAtAuction", (data) => {
+                    console.log("Son teklif güncellendi:", data);
+                });
+                })
+                .catch((err) => console.error("SignalR bağlantı hatası:", err));
+            },
     },
     mounted() {
         this.getAuctionProduct();
+        this.startSignalRConnection(); // SignalR bağlantısını başlat
     },
     beforeMount(){
         if(!this.$store.state.token){
             this.$router.push('/login');
+        }
+    },
+    beforeDestroy() {
+        if (this.connection) {
+        this.connection.stop(); // Bileşen yok edilmeden önce bağlantıyı durdur
         }
     }
 }

@@ -132,6 +132,12 @@
                         let iyzicoScript = paymentResponse.data.iyzicoCheckoutFormContent;
                         let iyzicoToken = paymentResponse.data.iyzicoToken;
 
+                        console.log(iyzicoToken);
+                        console.log(orderId);
+
+                        this.$store.commit('saveIyzicoToken', iyzicoToken);
+                        this.$store.commit('saveOrderId', orderId);
+
                         this.$router.push({path: '/payment', query: {content: iyzicoScript, token: iyzicoToken}});
 
                         alert("başarılı");
