@@ -7,7 +7,7 @@
         </div>
 
         <div class="products">
-            <div v-if="products" class="product-card" v-for="(product, index) in products" :key="index">
+            <div v-if="products[0]" class="product-card" v-for="(product, index) in products" :key="index">
                 <img :src="product.productDto.productImages[0].path">
                 <div class="description">
                     <h3>{{product.productDto.brand}}</h3>
