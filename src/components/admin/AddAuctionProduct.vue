@@ -125,7 +125,8 @@ import { jwtDecode } from 'jwt-decode';
             },
             formatDateToISO(dateString) {
                 const localDate = new Date(dateString); // Parse the input as local time
-                return new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000).toISOString();
+                return new Date(localDate).toISOString();
+                // return new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000).toISOString();
             },
             async addAuctionProduct(){
                 this.product.startingPrice = this.product.price;
