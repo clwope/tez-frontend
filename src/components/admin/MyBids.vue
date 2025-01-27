@@ -4,7 +4,7 @@
 
         <div class="table-div">
 
-            <h1>Müzayede Ürünlerim</h1>
+            <h1>Katıldığım Müzayedeler</h1>
 
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -19,7 +19,8 @@
                             <th scope="col">Başlangıç Zamanı</th>
                             <th scope="col">Bitiş Zamanı</th>
                             <th scope="col">Ürüne Git</th>
-                            <th scope="col">Sil</th>
+                            <th scope="col">Kazandınız</th>
+                            <th scope="col">Ödeme Yap</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,7 +35,8 @@
                             <td>{{formatDate(product.auctionStartDate)}}</td>
                             <td>{{formatDate(product.auctionEndDate)}}</td>
                             <td><button class="get-btn" @click="goToProduct(product.auctionId)">Ürüne Git</button></td>
-                            <td><button class="delete-btn" @click="deleteAuctionProduct(product.auctionId)" :disabled="product.auctionEnded === true">Sil</button></td>
+                            <td>{{product.isUserWinner ? "Evet" : "Hayır"}}</td>
+                            <td><button v-if="product.isUserWinner === true" class="pay-btn">Öde</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -54,10 +56,10 @@
             }
         },
         methods: {
-            async getAuctionProducts(){
+            async getBids(){
                 try {
                     let userId = jwtDecode(this.$store.state.token).Id;
-                    let response = await axios.get('http://18.196.156.3:8080/api/auction/get-auctions-by-userid', {
+                    let response = await axios.get('http://18.196.156.3:8080/api/auction/get-user-auctions-if-bid-on-auction', {
                         headers: {
                             userId: userId,
                             Authorization: `Bearer ${this.$store.state.token}`
@@ -69,25 +71,6 @@
 
                 } catch (error) {
                     console.error(error);
-                }
-            },
-            async deleteAuctionProduct(id){
-                try {
-                    let token = this.$store.state.token;
-                    let response = await axios.delete('http://18.196.156.3:8080/api/auction/delete-auction', {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            auctionId: id
-                        }
-                    })
-
-                    console.log(response.data)
-
-                    alert("Seçtiğiniz ürün başarıyla silindi");
-                    this.$router.go(0);
-                } catch (error) {
-                    console.error(error);
-                    alert("Bir hata oluştu")
                 }
             },
             formatDate(dateString) {
@@ -106,7 +89,7 @@
             }
         },
         mounted(){
-            this.getAuctionProducts();
+            this.getBids();
         },
         beforeMount(){
             if(!this.$store.state.token){
@@ -180,5 +163,22 @@
         background-color: white;
         color: red;
         border: 1px solid red;
+    }
+
+    .products > .table-div > .table > tbody > tr > td > button.pay-btn{
+        width: 80px;
+        height: 30px;
+        font-weight: 500;
+        color: white;
+        background-color: rgb(255, 102, 0);
+        border-radius: 5px;
+        border: none;
+        transition: 0.2s;
+    }
+
+    .products > .table-div > .table > tbody > tr > td > button.pay-btn:hover{
+        background-color: white;
+        color: rgb(255, 102, 0);
+        border: 1px solid rgb(255, 102, 0);
     }
 </style>

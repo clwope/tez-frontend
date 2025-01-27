@@ -28,6 +28,7 @@ import Payment from './components/Payment.vue'
 import VerifyPayment from './components/VerifyPayment.vue'
 import About from './components/About.vue'
 import Contact from './components/Contact.vue'
+import MyBids from './components/admin/MyBids.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,7 +41,7 @@ const router = createRouter({
         { path: '/auction-shop', component: AuctionShop },
         { path: '/cart', component: Cart },
         { path: '/product/:id', component: Product },
-        { path: '/auction-product/:id/:userId', component: AuctionProduct },
+        { path: '/auction-product/:id', component: AuctionProduct },
         { path: '/admin/home', component: AdminHome },
         { path: '/admin/add-product', component: AddProduct },
         { path: '/admin/add-auction-product', component: AddAuctionProduct },
@@ -48,6 +49,7 @@ const router = createRouter({
         { path: '/admin/auction-products', component: AuctionProducts},
         { path: '/admin/update-product/:id', component: UpdateProduct },
         { path: '/admin/orders', component: Orders},
+        { path: '/admin/bids', component: MyBids},
         { path: '/payment', component: Payment },
         { path: '/verify-payment', component: VerifyPayment},
         { path: '/test', component: Test }

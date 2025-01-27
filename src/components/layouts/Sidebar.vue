@@ -4,7 +4,7 @@
         <router-link to="/admin/products">Online Satış Ürünleri</router-link>
         <router-link to="/admin/auction-products">Müzayede Ürünleri</router-link>
         <router-link to="/admin/orders">Siparişlerim</router-link>
-        <a href="">Müzayedelerim</a>
+        <router-link to="/admin/bids">Müzayedelerim</router-link>
         <!-- <a href="">Online Satış Ürünleri</a> -->
         <!-- <a href="">Müzayede Ürünleri</a> -->
         <!-- <a href="">Siparişlerim</a> -->

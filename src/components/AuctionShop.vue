@@ -127,7 +127,7 @@
                     <h4>{{product.productDto.model}}</h4>
                     <hr>
                     <h5>Başlangıç Fiyatı: {{(product.startingPrice).toFixed(2)}} TL</h5>
-                    <button @click="goToProduct(product.productDto.id, product.userId)">Teklif Ver</button>
+                    <button @click="goToProduct(product.auctionId)">Teklif Ver</button>
                 </div>
             </div>
         </div>
@@ -147,13 +147,12 @@ export default {
   },
   methods: {
     async getAuctionProducts(){
-        let response = await axios.get('http://18.196.156.3:8080/api/auction/get-all-active-auctions', {
-            headers:{
-                Authorization: `Bearer ${this.$store.state.token}`
-            }
-        })
+        let response = await axios.get('http://18.196.156.3:8080/api/auction/get-all-active-auctions')
 
         this.products = response.data.data;
+
+        // console.log(response.data);
+        console.log(this.products);
     },
     // SignalR bağlantısını kur
     startSignalRConnection() {
@@ -176,12 +175,12 @@ export default {
         })
         .catch((err) => console.error("SignalR bağlantı hatası:", err));
     },
-    goToProduct(id, userId){
+    goToProduct(id){
         if(!this.$store.state.token){
             alert("Önce giriş yapmanız gerekiyor.");
             return;
         }
-        this.$router.push(`/auction-product/${id}/${userId}`);
+        this.$router.push(`/auction-product/${id}`);
     }
   },
   mounted() {

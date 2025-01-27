@@ -33,8 +33,8 @@
                 <div class="hr"></div>
 
                 <div class="description">
-                    <h3>{{formatDate(product.auctionStartDate)}}</h3>
-                    <h3>{{formatDate(product.auctionEndDate)}}</h3>
+                    <h3>{{formatDate(product.startDate)}}</h3>
+                    <h3>{{formatDate(product.endDate)}}</h3>
                 </div>
 
                 <div class="countdown">
@@ -44,7 +44,7 @@
 
                 <div class="bids">
                     <h3>Başlangıç Fiyatı: {{(product.startingPrice).toFixed(2)}} TL</h3>
-                    <h3>Son Teklif: {{(product.highestBid).toFixed(2)}} TL</h3>
+                    <h3>Son Teklif: {{(product.currentPrice).toFixed(2)}} TL</h3>
                 </div>
 
                 <input placeholder="Teklifinizi girin..." type="number" v-model="bid">
@@ -74,8 +74,7 @@ export default{
                 wrapAround: true
             },
             product: { },
-            productId: this.$route.params.id,
-            userId: this.$route.params.userId,
+            auctionId: this.$route.params.id,
             isActive: false,
             bid: null,
             connection: null, // SignalR bağlantısı
@@ -84,7 +83,6 @@ export default{
     methods: {
         async bidToProduct(){
             let userId = jwtDecode(this.$store.state.token).Id;
-            let auctionId = this.product.auctionId;
 
             if(this.bid === null || this.bid === ""){
                 alert("Bir teklif girmeniz gerek!")
@@ -94,18 +92,18 @@ export default{
                 alert("Teklifte virgül veya nokta gibi işaretler bulunmamalı!")
                 return
             }
-            if(this.bid <= this.product.startingPrice || this.bid <= this.product.highestBid){
+            if(this.bid <= this.product.startingPrice || this.bid <= this.product.currentPrice){
                 alert("Teklifiniz başlangıç fiyatı ve son tekliften büyük olmalı!");
                 return;
             }
-            if(userId === this.userId){
+            if(userId === this.product.userId){
                 alert("Kendi müzayede ürününüze teklif yapamazsınız!");
                 return;
             }
 
             let reqBody = {
                 userId: userId,
-                auctionId: auctionId,
+                auctionId: this.auctionId,
                 bidAmount: this.bid 
             }
 
@@ -116,7 +114,6 @@ export default{
             });
 
             console.log(response);
-
 
         },
         formatDate(dateString) {
@@ -132,30 +129,27 @@ export default{
         },
         async getAuctionProduct(){
             try {
-                // let userId = jwtDecode(this.$store.state.token).Id;
-                let response = await axios.get('http://18.196.156.3:8080/api/auction/get-auctions-by-userid', {
-                    headers: {
-                        userId: this.userId,
-                        Authorization: `Bearer ${this.$store.state.token}`
-                    }
-                })
+
+                let response = await axios.get('http://18.196.156.3:8080/api/auction/get-all-active-auctions');
+
                 console.log(response.data.data);
 
-                this.product = response.data.data.find((item) => item.productDto.id === this.productId);
-
-                let responseTwo = await axios.get('http://18.196.156.3:8080/api/auction/get-all-active-auctions', {
+                let responseTwo = await axios.get('http://18.196.156.3:8080/api/auction/get-auction-by-id', {
                     headers: {
-                        Authorization: `Bearer ${this.$store.state.token}`
+                        Authorization: `Bearer ${this.$store.state.token}`,
+                        actionId: this.auctionId
                     }
                 })
 
-                if(responseTwo.data.data.find((item) => item.productDto.id === this.productId)){
+                if(response.data.data.find((item) => item.auctionId === this.auctionId)){
                     this.isActive = true;
                 }
 
                 console.log(this.isActive);
 
-                console.log(this.product);
+                console.log(responseTwo.data.data);
+
+                this.product = responseTwo.data.data;
 
             } catch (error) {
                 console.error(error);
@@ -175,8 +169,8 @@ export default{
                 // Son teklif güncellemelerini dinle
                     this.connection.on("ReceiveLastBidAtAuction", (data) => {
                         console.log("Son teklif güncellendi:", data);
-                        if(data.auctionId === this.product.auctionId){
-                            this.product.highestBid = data.bidAmount;
+                        if(data.auctionId === this.auctionId){
+                            this.product.currentPrice = data.bidAmount;
                         }
                     });
                 })
