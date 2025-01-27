@@ -4,7 +4,7 @@
 
         <div class="table-div">
 
-            <h1>Katıldığım Müzayedeler</h1>
+            <h1>Katıldığım ve Sonuçlanan Müzayedeler</h1>
 
                 <table class="table table-bordered table-striped">
                     <thead>

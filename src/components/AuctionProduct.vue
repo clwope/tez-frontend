@@ -82,38 +82,45 @@ export default{
     },
     methods: {
         async bidToProduct(){
-            let userId = jwtDecode(this.$store.state.token).Id;
+            try {
+                let userId = jwtDecode(this.$store.state.token).Id;
 
-            if(this.bid === null || this.bid === ""){
-                alert("Bir teklif girmeniz gerek!")
-                return
-            }
-            if(this.bid.toString().includes(",") || this.bid.toString().includes(".")){
-                alert("Teklifte virgül veya nokta gibi işaretler bulunmamalı!")
-                return
-            }
-            if(this.bid <= this.product.startingPrice || this.bid <= this.product.currentPrice){
-                alert("Teklifiniz başlangıç fiyatı ve son tekliften büyük olmalı!");
-                return;
-            }
-            if(userId === this.product.userId){
-                alert("Kendi müzayede ürününüze teklif yapamazsınız!");
-                return;
-            }
-
-            let reqBody = {
-                userId: userId,
-                auctionId: this.auctionId,
-                bidAmount: this.bid 
-            }
-
-            let response = await axios.post('http://18.196.156.3:8080/api/auction/bid-on-auction', reqBody, {
-                headers: {
-                    Authorization: `Bearer ${this.$store.state.token}`
+                if(this.bid === null || this.bid === ""){
+                    alert("Bir teklif girmeniz gerek!")
+                    return
                 }
-            });
+                if(this.bid.toString().includes(",") || this.bid.toString().includes(".")){
+                    alert("Teklifte virgül veya nokta gibi işaretler bulunmamalı!")
+                    return
+                }
+                if(this.bid <= this.product.startingPrice || this.bid <= this.product.currentPrice){
+                    alert("Teklifiniz başlangıç fiyatı ve son tekliften büyük olmalı!");
+                    return;
+                }
+                if(userId === this.product.userId){
+                    alert("Kendi müzayede ürününüze teklif yapamazsınız!");
+                    return;
+                }
 
-            console.log(response);
+                let reqBody = {
+                    userId: userId,
+                    auctionId: this.auctionId,
+                    bidAmount: this.bid 
+                }
+
+                let response = await axios.post('http://18.196.156.3:8080/api/auction/bid-on-auction', reqBody, {
+                    headers: {
+                        Authorization: `Bearer ${this.$store.state.token}`
+                    }
+                });
+
+                console.log(response);
+
+                alert("Teklifiniz kabul edildi!");
+            } catch (error) {
+                console.error(error);
+                alert("Bir hata oluştu.");
+            }
 
         },
         formatDate(dateString) {
