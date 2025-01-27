@@ -76,6 +76,9 @@ export default{
                 image: this.product.productImages[0].path 
             };
             this.$store.commit('addToCart', item);
+            
+            alert("Seçtiğiniz ürün sepete eklendi!");
+            this.$router.push('/cart')
         },
         async getProduct(){
             let response = await axios.get('http://18.196.156.3:8080/api/product/get-product-by-id', {

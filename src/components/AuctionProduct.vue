@@ -33,8 +33,8 @@
                 <div class="hr"></div>
 
                 <div class="description">
-                    <h3>{{formatDate(product.startDate)}}</h3>
-                    <h3>{{formatDate(product.endDate)}}</h3>
+                    <h3>Başlangıç Zamanı: {{formatDate(product.startDate)}}</h3>
+                    <h3>Bitiş Zamanı: {{formatDate(product.endDate)}}</h3>
                 </div>
 
                 <div class="countdown">

@@ -138,9 +138,9 @@
                         this.$store.commit('saveIyzicoToken', iyzicoToken);
                         this.$store.commit('saveOrderId', orderId);
 
-                        this.$router.push({path: '/payment', query: {content: iyzicoScript, token: iyzicoToken}});
+                        localStorage.removeItem('cart');
 
-                        alert("başarılı");
+                        this.$router.push({path: '/payment', query: {content: iyzicoScript, token: iyzicoToken}});
 
                     } catch (error) {
                         console.error(error);

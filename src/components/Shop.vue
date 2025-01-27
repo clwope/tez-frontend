@@ -19,16 +19,8 @@
                             <h4>Marka</h4>
 
                             <div class="inputs">
-                                <div class="input-box">
-                                    <input type="checkbox" value="Brand-One"> <span>Brand-One</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Brand-Two"> <span>Brand-Two</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Brand-Three"> <span>Brand-Three</span>
+                                <div class="input-box" v-for="(brand, index) in distinctBrands" :key="index">
+                                    <input type="checkbox" :value="brand"> <span>{{ brand }}</span>
                                 </div>
                             </div>
                         </div>
@@ -37,16 +29,8 @@
                             <h4>Kordon Rengi</h4>
 
                             <div class="inputs">
-                                <div class="input-box">
-                                    <input type="checkbox" value="Black"> <span>Black</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="White"> <span>White</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Red"> <span>Red</span>
+                                <div class="input-box" v-for="(band, index) in distinctBands" :key="index">
+                                    <input type="checkbox" :value="band"> <span>{{ band }}</span>
                                 </div>
                             </div>
                         </div>
@@ -55,24 +39,8 @@
                             <h4>Kasa Rengi</h4>
 
                             <div class="inputs">
-                                <div class="input-box">
-                                    <input type="checkbox" value="Silver"> <span>Silver</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Gold"> <span>Gold</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Black"> <span>Black</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Silver"> <span>Silver</span>
-                                </div>
-
-                                <div class="input-box">
-                                    <input type="checkbox" value="Gold"> <span>Gold</span>
+                                <div class="input-box" v-for="(caseColor, index) in distinctCases" :key="index">
+                                    <input type="checkbox" :value="caseColor"> <span>{{ caseColor }}</span>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +122,11 @@
                 pageSize: 9,
                 totalPages: 1,
                 isFilterVisible: false,
-                isSortVisible: false
+                isSortVisible: false,
+                distinctBrands: [],
+                distinctBands: [],
+                distinctCases: [],
+                filterProducts: []
             }
         },
         methods: {
@@ -175,6 +147,8 @@
                     }
                 })
 
+                this.filterProducts = firstResponse.data.data;
+
                 this.totalPages = Math.ceil(firstResponse.data.data.length / this.pageSize)
 
                 let secondResponse = await axios.get('http://18.196.156.3:8080/api/product/get-product-list', {
@@ -187,7 +161,35 @@
                 this.products = secondResponse.data.data;
 
                 console.log(this.products);
-                console.log(this.totalPages)
+                console.log(this.totalPages);
+
+                this.getDistinctBrands();
+                this.getDistinctBands();
+                this.getDistinctCases();
+            },
+            getDistinctBrands() {
+                // Benzersiz markaları al
+                const distinctBrands = [...new Set(this.filterProducts.map(product => product.brand))];
+                // console.log("Distinct Brands:", distinctBrands);
+
+                // İsterseniz bu değerleri bir değişkene atayıp filtrelerde gösterebilirsiniz.
+                this.distinctBrands = distinctBrands;
+            },
+            getDistinctBands() {
+                // Benzersiz markaları al
+                const distinctBands = [...new Set(this.filterProducts.map(product => product.bandColor))];
+                // console.log("Distinct Brands:", distinctBrands);
+
+                // İsterseniz bu değerleri bir değişkene atayıp filtrelerde gösterebilirsiniz.
+                this.distinctBands = distinctBands;
+            },
+            getDistinctCases() {
+                // Benzersiz markaları al
+                const distinctCases = [...new Set(this.filterProducts.map(product => product.caseColor))];
+                // console.log("Distinct Brands:", distinctBrands);
+
+                // İsterseniz bu değerleri bir değişkene atayıp filtrelerde gösterebilirsiniz.
+                this.distinctCases = distinctCases;
             },
             changePage(newPage) {
                 if (newPage >= 1 && newPage <= this.totalPages) {

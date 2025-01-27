@@ -102,6 +102,9 @@
 
                     console.log(response.data);
 
+                    this.$router.go(0);
+                    alert("Kayıt oldunuz! Şimdi giriş yapabilirsiniz.")
+
                 } catch (error) {
                     alert("Bir hata oluştu")
                     console.log(error);
