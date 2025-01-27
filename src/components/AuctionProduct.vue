@@ -38,7 +38,8 @@
                 </div>
 
                 <div class="countdown">
-                    <h3 class="continue"><i class="bi bi-broadcast"></i> Müzayede Devam Ediyor</h3>
+                    <h3 v-if="isActive" class="continue"><i class="bi bi-broadcast"></i> Müzayede Devam Ediyor</h3>
+                    <h3 v-else class="end"><i class="bi bi-x-circle"></i> Müzayede Aktif Değil</h3>
                 </div>
 
                 <div class="bids">
@@ -74,24 +75,33 @@ export default{
             },
             product: { },
             productId: this.$route.params.id,
+            userId: this.$route.params.userId,
+            isActive: false,
             bid: null,
             connection: null, // SignalR bağlantısı
         }
     },
     methods: {
         async bidToProduct(){
+            let userId = jwtDecode(this.$store.state.token).Id;
+            let auctionId = this.product.auctionId;
+
             if(this.bid === null || this.bid === ""){
                 alert("Bir teklif girmeniz gerek!")
                 return
             }
-
             if(this.bid.toString().includes(",") || this.bid.toString().includes(".")){
                 alert("Teklifte virgül veya nokta gibi işaretler bulunmamalı!")
                 return
             }
-            
-            let userId = jwtDecode(this.$store.state.token).Id;
-            let auctionId = this.product.auctionId;
+            if(this.bid <= this.product.startingPrice || this.bid <= this.product.highestBid){
+                alert("Teklifiniz başlangıç fiyatı ve son tekliften büyük olmalı!");
+                return;
+            }
+            if(userId === this.userId){
+                alert("Kendi müzayede ürününüze teklif yapamazsınız!");
+                return;
+            }
 
             let reqBody = {
                 userId: userId,
@@ -122,16 +132,28 @@ export default{
         },
         async getAuctionProduct(){
             try {
-                let userId = jwtDecode(this.$store.state.token).Id;
+                // let userId = jwtDecode(this.$store.state.token).Id;
                 let response = await axios.get('http://18.196.156.3:8080/api/auction/get-auctions-by-userid', {
                     headers: {
-                        userId: userId,
+                        userId: this.userId,
                         Authorization: `Bearer ${this.$store.state.token}`
                     }
                 })
                 console.log(response.data.data);
 
                 this.product = response.data.data.find((item) => item.productDto.id === this.productId);
+
+                let responseTwo = await axios.get('http://18.196.156.3:8080/api/auction/get-all-active-auctions', {
+                    headers: {
+                        Authorization: `Bearer ${this.$store.state.token}`
+                    }
+                })
+
+                if(responseTwo.data.data.find((item) => item.productDto.id === this.productId)){
+                    this.isActive = true;
+                }
+
+                console.log(this.isActive);
 
                 console.log(this.product);
 
@@ -151,9 +173,12 @@ export default{
                 console.log("SignalR bağlantısı kuruldu.");
 
                 // Son teklif güncellemelerini dinle
-                this.connection.on("ReceiveLastBidAtAuction", (data) => {
-                    console.log("Son teklif güncellendi:", data);
-                });
+                    this.connection.on("ReceiveLastBidAtAuction", (data) => {
+                        console.log("Son teklif güncellendi:", data);
+                        if(data.auctionId === this.product.auctionId){
+                            this.product.highestBid = data.bidAmount;
+                        }
+                    });
                 })
                 .catch((err) => console.error("SignalR bağlantı hatası:", err));
             },

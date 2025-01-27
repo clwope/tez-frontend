@@ -11,22 +11,22 @@
                 <div class="carousel-item active">
                     <img src="../assets/images/resim_2.png" class="d-block w-100">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>First slide label</h5>
-                        <p>Some representative placeholder content for the first slide.</p>
+                        <h5>Online Satış</h5>
+                        <p>Ürülerinizi listeleyip satın veya hayalinizdeki ürünü satın alın.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <img src="../assets/images/resim_5.jpeg" class="d-block w-100">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>Second slide label</h5>
-                        <p>Some representative placeholder content for the second slide.</p>
+                        <h5>Müzayede İmkanı</h5>
+                        <p>Ürünlerinizi açık artırmalara koyup daha değerli bir şekilde satabilirsiniz!</p>
                     </div>
                 </div>
                 <div class="carousel-item">
                 <img src="../assets/images/resim_3.png" class="d-block w-100">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>Third slide label</h5>
-                        <p>Some representative placeholder content for the third slide.</p>
+                        <h5>7/24 Destek</h5>
+                        <p>Her hangi bir sorununuzda iletişim sayfasındaki bilgileri kullanarak bizimle iletişime geçebilirsiniz.</p>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                     Bu eşsiz fırsat sayesinde hem heyecanın tadını çıkarabilir 
                     hem de bütçeni koruyarak istediğin ürünü satın almanın keyfini yaşayabilirsin.
                 </p>
-                <a href="/auction-shop">Müzayede</a>
+                <router-link to="/auction-shop">Müzayede</router-link>
             </div>
         </div>   
         
@@ -96,7 +96,7 @@
                     sadece birkaç tıkla ulaşabilir, güvenli ve hızlı bir şekilde siparişini tamamlayarak hayalindeki
                     ürünlere zahmetsizce sahip olmanın keyfini çıkarabilirsin.
                 </p>
-                <a href="/shop">Ürünler</a>
+                <router-link to="/shop">Ürünler</router-link>
             </div>
             <div class="info-img">
                 <img src="../assets/images/resim_3.png" alt="">
@@ -110,7 +110,7 @@
             <Carousel v-bind="carouselConfig">
                 <Slide v-for="(testimonial, index) in testimonials" :key="index">
                     <div class="carousel__item">
-                        <img src="../assets/images/user_img.jpg">
+                        <img :src="testimonial.image">
                         <h4>{{ testimonial.author }}</h4>
                         <p>{{ testimonial.quote }}</p>
                     </div>
@@ -143,9 +143,9 @@
                     wrapAround: true
                 },
                 testimonials: [
-                    { quote: "This is the best service ever!", author: "John Doe" },
-                    { quote: "I had an amazing experience.", author: "Jane Smith" },
-                    { quote: "Highly recommend to everyone!", author: "Robert Brown" },
+                    { quote: "İstediğim saatleri bulabiliyorum!", author: "Emre Demir", image: "/tez-frontend/images/user_img2.jpg" },
+                    { quote: "Ürünümü müzayede sayesinde piyasasının üstünde satabildim.", author: "Zeynep Yıldız", image: "/tez-frontend/images/user_img.jpg" },
+                    { quote: "Herkese öneriyorum admin paneli çok kullanışlı!!", author: "Murat Şahin", image: "/tez-frontend/images/user_img3.jpg" },
                 ]
             }
         }

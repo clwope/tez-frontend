@@ -102,7 +102,7 @@
                 return `${year}-${month}-${day} ${hours}:${minutes}`;
             },
             goToProduct(id){
-                this.$router.push(`/auction-product/${id}`);
+                this.$router.push(`/auction-product/${id}/${jwtDecode(this.$store.state.token).Id}`);
             }
         },
         mounted(){

@@ -121,13 +121,13 @@
 
         <div class="products">
             <div class="product-card" v-for="(product, index) in products" :key="index">
-                <img :src="product.img">
+                <img :src="product.productDto.productImages[0].path">
                 <div class="description">
-                    <h3>{{product.name}} - $275.00</h3>
-                    <h4>{{product.model}}</h4>
+                    <h3>{{product.productDto.brand}}</h3>
+                    <h4>{{product.productDto.model}}</h4>
                     <hr>
-                    <h5>Son Teklif: {{product.price}}</h5>
-                    <button>Teklif Ver</button>
+                    <h5>Başlangıç Fiyatı: {{(product.startingPrice).toFixed(2)}} TL</h5>
+                    <button @click="goToProduct(product.productDto.id, product.userId)">Teklif Ver</button>
                 </div>
             </div>
         </div>
@@ -136,7 +136,7 @@
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 
 export default {
   data() {
@@ -146,7 +146,16 @@ export default {
     };
   },
   methods: {
-    // SignalR bağlantısını başlat
+    async getAuctionProducts(){
+        let response = await axios.get('http://18.196.156.3:8080/api/auction/get-all-active-auctions', {
+            headers:{
+                Authorization: `Bearer ${this.$store.state.token}`
+            }
+        })
+
+        this.products = response.data.data;
+    },
+    // SignalR bağlantısını kur
     startSignalRConnection() {
       this.connection = new signalR.HubConnectionBuilder()
         .withUrl("http://18.196.156.3:8080/auctionHub")
@@ -162,30 +171,21 @@ export default {
           // Aktif müzayedeleri dinle
           this.connection.on("ReceiveAllActiveAuctions", (data) => {
             console.log("Aktif müzayedeler güncellendi:", data);
-            // this.products = data.map((auction) => ({
-            //   img: "/path/to/default/image.jpg", // Örnek resim
-            //   name: auction.productName,
-            //   model: auction.productModel,
-            //   highestBid: auction.highestBid || auction.startingPrice,
-            //   price: `${auction.startingPrice} TL`,
-            // }));
+                this.products = data;
           });
-
-          // Son teklif güncellemelerini dinle
-        //   this.connection.on("ReceiveAllActiveAuctionBind", (data) => {
-        //     console.log("Son teklif güncellendi:", data);
-        //     const auction = this.products.find(
-        //       (product) => product.id === data.auctionId
-        //     );
-        //     if (auction) {
-        //       auction.highestBid = data.bidAmount;
-        //     }
-        //   });
         })
         .catch((err) => console.error("SignalR bağlantı hatası:", err));
     },
+    goToProduct(id, userId){
+        if(!this.$store.state.token){
+            alert("Önce giriş yapmanız gerekiyor.");
+            return;
+        }
+        this.$router.push(`/auction-product/${id}/${userId}`);
+    }
   },
   mounted() {
+    this.getAuctionProducts();
     this.startSignalRConnection(); // SignalR bağlantısını başlat
   },
   beforeDestroy() {
@@ -334,7 +334,7 @@ export default {
         font-weight: 500;
         font-size: 20px;
         font-style: italic;
-        color: green;
+        color: black;
     }
 
     .shop > .products > .product-card > .description > button{
