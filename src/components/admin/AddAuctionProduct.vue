@@ -151,6 +151,7 @@ import { jwtDecode } from 'jwt-decode';
 
                     console.log(response.data);
                     alert("Müzayede ürününüz başarıyla eklendi!");
+                    this.$router.push('/admin/auction-products');
                 } catch (error) {
                     console.error(error);
                     alert("Bir hata oluştu");

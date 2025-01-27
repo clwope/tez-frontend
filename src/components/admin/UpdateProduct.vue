@@ -101,23 +101,6 @@
             };
         },
         methods: {
-            // handleFileUpload(event) {
-            //     this.previewImages = []; // Clear existing previews
-            //     this.product.productImages = [];
-
-            //     const files = event.target.files;
-
-            //     Array.from(files).forEach(file => {
-            //         let path = "/tez-frontend/images/"; // bunu add producta göre dğiştir
-            //         this.product.productImages.push({ path: path + file.name });
-
-            //         const reader = new FileReader();
-            //         reader.onload = e => {
-            //             this.previewImages.push(e.target.result); // Add preview image URL
-            //         };
-            //         reader.readAsDataURL(file); // Convert file to Data URL for preview
-            //     });
-            // },
             logProduct(){
                 console.log(this.product);
             },
@@ -134,7 +117,8 @@
                     );
 
                     console.log(response.data);
-                    alert("Ürününüz başarıyla güncellendi!")
+                    alert("Ürününüz başarıyla güncellendi!");
+                    this.$router.push('/admin/products');
                 } catch (error) {
                     console.error(error);
                     alert("Bir hata oluştu");

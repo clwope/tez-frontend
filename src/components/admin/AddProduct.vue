@@ -137,6 +137,7 @@
 
                     console.log(response.data);
                     alert("Ürününüz başarıyla eklendi!")
+                    this.$router.push('/admin/products');
                 } catch (error) {
                     console.error(error);
                     alert("Bir hata oluştu");

@@ -26,7 +26,7 @@
                 <img src="../assets/images/resim_3.png" class="d-block w-100">
                     <div class="carousel-caption d-none d-md-block">
                         <h5>7/24 Destek</h5>
-                        <p>Her hangi bir sorununuzda iletişim sayfasındaki bilgileri kullanarak bizimle iletişime geçebilirsiniz.</p>
+                        <p>Herhangi bir sorununuzda iletişim sayfasındaki bilgileri kullanarak bizimle iletişime geçebilirsiniz.</p>
                     </div>
                 </div>
             </div>
