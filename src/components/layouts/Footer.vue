@@ -4,8 +4,8 @@
         <div class="footer-links">
             <router-link to="/">Ana Sayfa</router-link>
             <router-link to="/cart">Sepet</router-link>
-            <router-link to="">Hakkında</router-link>
-            <router-link to="">İletişim</router-link>
+            <router-link to="/about">Hakkında</router-link>
+            <router-link to="/contact">İletişim</router-link>
         </div>
         <div class="footer-socials">
             <a href="">Instagram <i class="bi bi-instagram"></i></a>

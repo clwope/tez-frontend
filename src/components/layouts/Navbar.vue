@@ -10,8 +10,8 @@
                     <router-link to="/auction-shop">Müzayede</router-link>
                 </div>
             </div>
-            <a href="">Hakkında</a>
-            <a href="">İletişim</a>
+            <router-link to="/about">Hakkında</router-link>
+            <router-link to="/contact">İletişim</router-link>
         </div>
 
         <div v-if="this.$store.state.token" class="second-nav">

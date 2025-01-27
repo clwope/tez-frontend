@@ -26,11 +26,15 @@ import UpdateProduct from './components/admin/UpdateProduct.vue'
 import Orders from './components/admin/Orders.vue'
 import Payment from './components/Payment.vue'
 import VerifyPayment from './components/VerifyPayment.vue'
+import About from './components/About.vue'
+import Contact from './components/Contact.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         { path: '/', component: Home },
+        { path: '/about', component: About },
+        { path: '/contact', component: Contact },
         { path: '/login', component: Login },
         { path: '/shop', component: Shop },
         { path: '/auction-shop', component: AuctionShop },
