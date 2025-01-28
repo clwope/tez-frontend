@@ -91,7 +91,7 @@
                         return {productId: item.productId, quantity: item.quantity}
                     });
 
-                    let order = { userId: userId, createBasketItemDtos: [...basketItemDtos] };
+                    let order = { userId: userId, createBasketItemDtos: [...basketItemDtos], isAuctionProductOrder: false, auctionId: null };
 
                     console.log(basket, userId, order);
 
