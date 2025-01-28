@@ -109,7 +109,7 @@
 
                     console.log(product);
 
-                    let order = { userId: userId, createBasketItemDtos: [{productId: product.productDto.id, quantity: 1}] };
+                    let order = { userId: userId, createBasketItemDtos: [{productId: product.productDto.id, quantity: 1}], isAuctionProductOrder: true, auctionId: product.auctionId };
 
                     console.log(order);
 
